@@ -71,7 +71,7 @@ namespace UAssetAPI
             writer.Write(Names.Count);
             if (asset.EngineVersion < UE4Version.VER_UE4_TIGHTLY_PACKED_ENUMS)
             {
-                var namesForSerialization = new Dictionary<long, FName>();
+                Dictionary<long, FName> namesForSerialization = new Dictionary<long, FName>();
                 for (int i = 0; i < Names.Count; i++) namesForSerialization.Add(Names[i].Item2, Names[i].Item1);
                 for (int i = 0; i < Names.Count; i++)
                 {

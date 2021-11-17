@@ -104,7 +104,7 @@ namespace UAssetAPI.PropertyTypes
         /// <returns>A deep copy of the current property.</returns>
         public object Clone()
         {
-            var res = (PropertyData)MemberwiseClone();
+            PropertyData res = (PropertyData)MemberwiseClone();
             res.Name = (FName)this.Name.Clone();
             if (res.RawValue is ICloneable cloneableValue) res.RawValue = cloneableValue.Clone();
 

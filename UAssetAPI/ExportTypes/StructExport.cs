@@ -100,7 +100,7 @@ namespace UAssetAPI
             {
                 if (ParseBytecode)
                 {
-                    var tempCode = new List<Kismet.Bytecode.KismetExpression>();
+                    List<KismetExpression> tempCode = new List<Kismet.Bytecode.KismetExpression>();
                     while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)
                     {
                         tempCode.Add(ExpressionSerializer.ReadExpression(reader));

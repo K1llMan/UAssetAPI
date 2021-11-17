@@ -33,7 +33,7 @@ namespace UAssetAPI.StructTypes
             Value = new VectorPropertyData[2];
             for (int i = 0; i < 2; i++)
             {
-                var next = new VectorPropertyData(Name);
+                VectorPropertyData next = new VectorPropertyData(Name);
                 next.Read(reader, false, 0);
                 Value[i] = next;
             }

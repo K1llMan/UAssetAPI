@@ -36,7 +36,7 @@ namespace UAssetAPI.StructTypes
 
         private void ReadOnce(AssetBinaryReader reader, Type T, long offset)
         {
-            var data = Activator.CreateInstance(T, Name) as PropertyData;
+            PropertyData data = Activator.CreateInstance(T, Name) as PropertyData;
             if (data == null) return;
             data.Offset = offset;
             data.Read(reader, false, 0);
@@ -98,7 +98,7 @@ namespace UAssetAPI.StructTypes
             int here = (int)writer.BaseStream.Position;
             if (Value != null)
             {
-                foreach (var t in Value)
+                foreach (PropertyData t in Value)
                 {
                     MainSerializer.Write(t, writer, true);
                 }

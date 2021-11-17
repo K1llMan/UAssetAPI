@@ -12,7 +12,7 @@ namespace UAssetAPI
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var realVal = (FName)value;
+            FName realVal = (FName)value;
             writer.WriteValue(realVal is null ? "null" : realVal.ToString());
         }
 

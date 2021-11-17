@@ -151,10 +151,10 @@ namespace UAssetAPI
         {
             InitAllFields();
 
-            var sb = new StringBuilder();
-            foreach (var info in _allFields)
+            StringBuilder sb = new StringBuilder();
+            foreach (FieldInfo info in _allFields)
             {
-                var value = info.GetValue(this) ?? "(null)";
+                object value = info.GetValue(this) ?? "(null)";
                 sb.AppendLine(info.Name + ": " + value.ToString());
             }
             return sb.ToString();
@@ -162,7 +162,7 @@ namespace UAssetAPI
 
         public object Clone()
         {
-            var res = (Export)MemberwiseClone();
+            Export res = (Export)MemberwiseClone();
             res.Extras = (byte[])this.Extras.Clone();
             res.PackageGuid = new Guid(this.PackageGuid.ToByteArray());
             return res;
@@ -182,7 +182,7 @@ namespace UAssetAPI
             res.Extras = this.Extras;
             res.ObjectName = this.ObjectName;
             res.OuterIndex = this.OuterIndex;
-            foreach (var info in _allFields)
+            foreach (FieldInfo info in _allFields)
             {
                 info.SetValue(res, info.GetValue(this));
             }

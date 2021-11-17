@@ -1,0 +1,308 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+
+using FluentAssertions;
+
+using UAssetAPI.PropertyTypes;
+using UAssetAPI.StructTypes;
+
+using Xunit;
+using Xunit.Abstractions;
+
+namespace UAssetAPI.Tests.Tests
+{
+    [Collection("Basic Test Harness")]
+    public class BasicTest : AssetUnitTest
+    {
+        /// <summary>
+        /// Determines whether or not all exports in an asset have parsed correctly.
+        /// </summary>
+        /// <param name="tester">The asset to test.</param>
+        /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
+        public bool CheckAllExportsParsedCorrectly(UAsset tester)
+        {
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport is RawExport) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Retrieves all the test assets in a particular folder.
+        /// </summary>
+        /// <param name="folder">The folder to check for test assets.</param>
+        /// <returns>An array of paths to assets that should be tested.</returns>
+        public string[] GetAllTestAssets(string folder)
+        {
+            List<string> allFilesToTest = Directory.GetFiles(folder, "*.uasset").ToList();
+            allFilesToTest.AddRange(Directory.GetFiles(folder, "*.umap"));
+            return allFilesToTest.ToArray();
+        }
+
+        /// <summary>
+        /// MapProperties contain no easy way to determine the type of structs within them.
+        /// For C++ classes, it is impossible without access to the headers, but for blueprint classes, the correct serialization is contained within the UClass.
+        /// In this test, we take an asset with custom struct serialization in a map and extract data from the ClassExport in order to determine the correct serialization for the structs.
+        /// Binary equality is expected.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestCustomSerializationStructsInMap/wtf.uasset")]
+        public void TestCustomSerializationStructsInMap(string path)
+        {
+            UAsset tester = new UAsset(path, UE4Version.VER_UE4_25);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+
+            // Get the map property in export 2
+            Export exportTwo = FPackageIndex.FromRawIndex(2).ToExport(tester);
+            (exportTwo is NormalExport).Should().BeTrue();
+
+            NormalExport exportTwoNormal = (NormalExport)exportTwo;
+
+            FName mapPropertyName = FName.FromString("KekWait");
+            MapPropertyData testMap = exportTwoNormal[mapPropertyName] as MapPropertyData;
+            testMap.Should().NotBeNull();
+            (testMap == exportTwoNormal[mapPropertyName.Value.Value]).Should().BeTrue();
+
+            // Get the first entry of the map
+            StructPropertyData entryKey = testMap?.Value?.Keys?.ElementAt(0) as StructPropertyData;
+            StructPropertyData entryValue = testMap?.Value?[0] as StructPropertyData;
+            entryKey?.Value?[0].Should().NotBeNull();
+            entryValue?.Value?[0].Should().NotBeNull();
+
+            // Check that the properties are correct
+            (entryKey.Value[0] is VectorPropertyData).Should().BeTrue();
+            (entryValue.Value[0] is LinearColorPropertyData).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// In this test, we examine a cooked asset that has been modified by an external tool.
+        /// As a result of external modification, the asset now has new name map entries whose hashes were left empty.
+        /// Binary equality is expected. Expected behavior is for UAssetAPI to detect this and override its normal hash algorithm.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestImproperNameMapHashes/OC_Gatling_DamageB_B.uasset")]
+        public void TestImproperNameMapHashes(string path)
+        {
+            UAsset tester = new UAsset(path, UE4Version.VER_UE4_25);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+
+            Dictionary<string, bool> testingEntries = new Dictionary<string, bool>();
+            testingEntries["/Game/WeaponsNTools/GatlingGun/Overclocks/OC_BonusesAndPenalties/OC_Bonus_MovmentBonus_150p"] = false;
+            testingEntries["/Game/WeaponsNTools/GatlingGun/Overclocks/OC_BonusesAndPenalties/OC_Bonus_MovmentBonus_150p.OC_Bonus_MovmentBonus_150p"] = false;
+
+            foreach (KeyValuePair<FString, uint> overrideHashes in tester.OverrideNameMapHashes)
+            {
+                if (testingEntries.ContainsKey(overrideHashes.Key.Value))
+                {
+                    (overrideHashes.Value == 0).Should().BeTrue();
+                    testingEntries[overrideHashes.Key.Value] = true;
+                }
+            }
+
+            foreach (KeyValuePair<string, bool> testingEntry in testingEntries)
+            {
+                testingEntry.Value.Should().BeTrue();
+            }
+        }
+
+        /// <summary>
+        /// In this test, we examine a cooked asset that has been modified by an external tool.
+        /// As a result of external modification, two identical entries now exist in the name map, which never occurs in assets cooked by the Unreal Engine.
+        /// Binary equality is not expected, but the asset must successfully parse anyways.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestDuplicateNameMapEntries/BIOME_AzureWeald.uasset")]
+        public void TestDuplicateNameMapEntries(string path)
+        {
+            UAsset tester = new UAsset(path, UE4Version.VER_UE4_25);
+
+            // Make sure a duplicate entry actually exists
+            bool duplicatesExist = false;
+            Dictionary<string, bool> enumeratedEntries = new Dictionary<string, bool>();
+            foreach (FString entry in tester.GetNameMapIndexList())
+            {
+                if (enumeratedEntries.ContainsKey(entry.Value) && enumeratedEntries[entry.Value])
+                {
+                    duplicatesExist = true;
+                    break;
+                }
+                enumeratedEntries[entry.Value] = true;
+            }
+            duplicatesExist.Should().BeTrue();
+
+            // Make sure all exports parsed correctly
+            CheckAllExportsParsedCorrectly(tester).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// In this test, we have an asset with a few properties that UAssetAPI has no serialization for. (The properties do not actually exist in the engine itself, so this is expected behavior.)
+        /// UAssetAPI must fallback to UnknownPropertyType to parse the asset correctly and maintain binary equality.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestUnknownProperties/BP_DetPack_Charge.uasset")]
+        public void TestUnknownProperties(string path)
+        {
+            UAsset tester = new UAsset(path, UE4Version.VER_UE4_25);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+            CheckAllExportsParsedCorrectly(tester).Should().BeTrue();
+
+            // Check that only the expected unknown properties are present
+            Dictionary<string, bool> newUnknownProperties = new Dictionary<string, bool>();
+            newUnknownProperties.Add("GarbagePropty", false);
+            newUnknownProperties.Add("EvenMoreGarbageTestingPropertyy", false);
+
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport is NormalExport normalTestExport)
+                {
+                    foreach (PropertyData prop in normalTestExport.Data)
+                    {
+                        if (prop is UnknownPropertyData unknownProp)
+                        {
+                            string serializingType = unknownProp?.SerializingPropertyType?.Value?.Value;
+                            serializingType.Should().NotBeNull();
+                            newUnknownProperties.ContainsKey(serializingType).Should().BeTrue();
+                            newUnknownProperties[serializingType] = true;
+                        }
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<string, bool> entry in newUnknownProperties)
+            {
+                entry.Value.Should().BeTrue();
+            }
+        }
+
+        private void TestManyAssetsSubsection(string path, UE4Version version)
+        {
+            Debug.WriteLine(path);
+            UAsset tester = new UAsset(path, version);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+            CheckAllExportsParsedCorrectly(tester).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// In this test, we examine a variety of assets from different games and ensure that they parse correctly and maintain binary equality.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestManyAssets/Astroneer/DebugMenu.uasset")]
+        [InlineData(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap")]
+        [InlineData(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset")]
+        [InlineData(@"TestAssets/TestManyAssets/Astroneer/LargeResourceCanister_IT.uasset")]
+        [InlineData(@"TestAssets/TestManyAssets/Astroneer/ResourceProgressCurve.uasset")]
+        public void TestManyAssetsAstroneer(string path)
+        {
+            TestManyAssetsSubsection(path, UE4Version.VER_UE4_23);
+        }
+
+        /// <summary>
+        /// In this test, we examine a variety of assets from different games and ensure that they parse correctly and maintain binary equality.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_BG.umap")]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_Gimmick.umap")]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap")]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset")]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_ItemMaster.uasset")]
+        public void TestManyAssetsBloodstained(string path)
+        {
+            TestManyAssetsSubsection(path, UE4Version.VER_UE4_18);
+        }
+
+        /// <summary>
+        /// In this test, we examine and modify a DataTable to ensure that it parses correctly and maintains binary equality.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset")]
+        public void TestDataTables(string path)
+        {
+            UAsset tester = new UAsset(path, UE4Version.VER_UE4_18);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+            CheckAllExportsParsedCorrectly(tester).Should().BeTrue();
+            (tester.Exports.Count == 1).Should().BeTrue();
+
+            DataTableExport ourDataTableExport = tester.Exports[0] as DataTableExport;
+            DataTable ourTable = ourDataTableExport?.Table;
+            ourTable.Should().NotBeNull();
+
+            // Check out the first entry to make sure it's parsing alright, and flip all the flags for later testing
+            StructPropertyData firstEntry = ourTable.Data[0];
+
+            bool didFindTestName = false;
+            for (int i = 0; i < firstEntry.Value.Count; i++)
+            {
+                PropertyData propData = firstEntry.Value[i];
+                Debug.WriteLine(i + ": " + propData.Name + ", " + propData.PropertyType);
+                if (propData.Name == new FName("AcceleratorANDDoubleJump")) didFindTestName = true;
+                if (propData is BoolPropertyData boolProp) boolProp.Value = !boolProp.Value;
+            }
+            didFindTestName.Should().BeTrue();
+
+            string modifiedTableFilename = Path.Combine(Path.GetDirectoryName(path), "MODIFIED.uasset");
+            // Save the modified table
+            tester.Write(modifiedTableFilename);
+
+            // Load the modified table back in and make sure we're good
+            UAsset tester2 = new UAsset(modifiedTableFilename, UE4Version.VER_UE4_18);
+            tester2.VerifyBinaryEquality().Should().BeTrue();
+            CheckAllExportsParsedCorrectly(tester2).Should().BeTrue();
+            (tester2.Exports.Count == 1).Should().BeTrue();
+
+            // Flip the flags back to what they originally were
+            firstEntry = (tester2.Exports[0] as DataTableExport)?.Table?.Data?[0];
+            firstEntry.Should().NotBeNull();
+            for (int i = 0; i < firstEntry.Value.Count; i++)
+            {
+                if (firstEntry.Value[i] is BoolPropertyData boolProp) boolProp.Value = !boolProp.Value;
+            }
+
+            // Save and check that it's binary equal to what we originally had
+            tester2.Write(tester2.FilePath);
+            File.ReadAllBytes(path)
+                .SequenceEqual(File.ReadAllBytes(modifiedTableFilename)).Should().BeTrue();
+        }
+
+        private void TestJsonOnFile(string file, UE4Version version)
+        {
+            Debug.WriteLine(file);
+            UAsset tester = new UAsset(file, version);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+            CheckAllExportsParsedCorrectly(tester).Should().BeTrue();
+
+            string jsonSerializedAsset = tester.SerializeJson();
+            string jsonFilename = Path.Combine(Path.GetDirectoryName(file), "raw.json");
+            File.WriteAllText(jsonFilename, jsonSerializedAsset);
+
+            UAsset tester2 = UAsset.DeserializeJson(jsonFilename);
+            string modifiedFilename = Path.Combine(Path.GetDirectoryName(file), "MODIFIED.uasset");
+            tester2.Write(modifiedFilename);
+
+            // For the assets we're testing binary equality is maintained and can be used as a metric of success, but binary equality is not guaranteed for most assets
+            File.ReadAllBytes(file)
+                .SequenceEqual(File.ReadAllBytes(modifiedFilename))
+                .Should().BeTrue();
+        }
+
+        /// <summary>
+        /// In this test, we serialize some assets to JSON and back to test if the JSON serialization system is functional.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", UE4Version.VER_UE4_18)]
+        [InlineData(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", UE4Version.VER_UE4_18)]
+        [InlineData(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", UE4Version.VER_UE4_23)]
+        [InlineData(@"TestAssets/TestJson/ABP_SMG_A.uasset", UE4Version.VER_UE4_25)]
+        public void TestJson(string path, UE4Version version)
+        {
+            TestJsonOnFile(path, version);
+        }
+
+        public BasicTest(AssetUnitTestHarness fixture, ITestOutputHelper output) : base(fixture, output)
+        {
+        }
+    }
+}

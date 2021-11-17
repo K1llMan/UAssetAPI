@@ -70,7 +70,7 @@ namespace UAssetAPI
                     Type currentPropertyDataType = allPropertyDataTypes[j];
                     if (currentPropertyDataType == null || currentPropertyDataType.ContainsGenericParameters) continue;
 
-                    var testInstance = Activator.CreateInstance(currentPropertyDataType);
+                    object testInstance = Activator.CreateInstance(currentPropertyDataType);
 
                     FName returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(testInstance, null) as FName;
                     if (returnedPropType == null) continue;
@@ -191,7 +191,7 @@ namespace UAssetAPI
             FName serializedType = reader.ReadFName();
             Type requestedType = Type.GetType("UAssetAPI.FieldTypes.F" + allNonLetters.Replace(serializedType.Value.Value, string.Empty));
             if (requestedType == null) requestedType = typeof(FGenericProperty);
-            var res = (FProperty)Activator.CreateInstance(requestedType);
+            FProperty res = (FProperty)Activator.CreateInstance(requestedType);
             res.SerializedType = serializedType;
             res.Read(reader);
             return res;

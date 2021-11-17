@@ -21,9 +21,9 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            var rotation = new FQuat(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            var translation = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            var scale = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            FQuat rotation = new FQuat(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            FVector translation = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            FVector scale = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             Value = new FTransform(rotation, translation, scale);
         }
 

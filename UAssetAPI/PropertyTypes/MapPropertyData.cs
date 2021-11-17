@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -83,7 +84,7 @@ namespace UAssetAPI.PropertyTypes
                     data.Read(reader, false, 1);
                     return data;
                 default:
-                    var res = MainSerializer.TypeToClass(type, name, reader.Asset, null, leng);
+                    PropertyData res = MainSerializer.TypeToClass(type, name, reader.Asset, null, leng);
                     res.Offset = reader.BaseStream.Position;
                     res.Read(reader, includeHeader, leng);
                     return res;
@@ -92,7 +93,7 @@ namespace UAssetAPI.PropertyTypes
 
         private TMap<PropertyData, PropertyData> ReadRawMap(AssetBinaryReader reader, FName type1, FName type2, int numEntries)
         {
-            var resultingDict = new TMap<PropertyData, PropertyData>();
+            TMap<PropertyData, PropertyData> resultingDict = new TMap<PropertyData, PropertyData>();
 
             PropertyData data1 = null;
             PropertyData data2 = null;
@@ -135,7 +136,7 @@ namespace UAssetAPI.PropertyTypes
 
         private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
         {
-            foreach (var entry in map)
+            foreach (KeyValuePair<PropertyData, PropertyData> entry in map)
             {
                 entry.Key.Offset = writer.BaseStream.Position;
                 entry.Key.Write(writer, false);
@@ -167,7 +168,7 @@ namespace UAssetAPI.PropertyTypes
             {
                 for (int i = 0; i < KeysToRemove.Length; i++)
                 {
-                    var entry = KeysToRemove[i];
+                    PropertyData entry = KeysToRemove[i];
                     entry.Offset = writer.BaseStream.Position;
                     entry.Write(writer, false);
                 }
@@ -182,8 +183,8 @@ namespace UAssetAPI.PropertyTypes
         {
             MapPropertyData cloningProperty = (MapPropertyData)res;
 
-            var newDict = new TMap<PropertyData, PropertyData>();
-            foreach (var entry in this.Value)
+            TMap<PropertyData, PropertyData> newDict = new TMap<PropertyData, PropertyData>();
+            foreach (KeyValuePair<PropertyData, PropertyData> entry in this.Value)
             {
                 newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
             }

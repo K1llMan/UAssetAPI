@@ -34,7 +34,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte(); // null byte
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
+            ArrayPropertyData removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Read(reader, false, leng1, leng2);
             RemovedItems = removedItemsDummy.Value;
@@ -52,7 +52,7 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
+            ArrayPropertyData removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.DummyStruct = RemovedItemsDummyStruct;
             removedItemsDummy.Value = RemovedItems;

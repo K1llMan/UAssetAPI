@@ -56,7 +56,7 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            var valueList = new List<int>();
+            List<int> valueList = new List<int>();
             if (int.TryParse(d[0], out int res1)) valueList.Add(res1);
             if (int.TryParse(d[1], out int res2)) valueList.Add(res2);
             if (int.TryParse(d[2], out int res3)) valueList.Add(res3);

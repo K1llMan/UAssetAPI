@@ -73,7 +73,7 @@ namespace UAssetAPI
         {
             get
             {
-                var pair = _impl.Current;
+                KeyValuePair<TKey, TValue> pair = _impl.Current;
                 return new DictionaryEntry(pair.Key, pair.Value);
             }
         }
@@ -126,31 +126,31 @@ namespace UAssetAPI
 
         public void SortByKeys()
         {
-            var comparer = Comparer<TKey>.Default;
+            Comparer<TKey> comparer = Comparer<TKey>.Default;
             SortByKeys(comparer);
         }
 
         public void SortByKeys(IComparer<TKey> keyComparer)
         {
-            var comparer = new Comparer2<TItem>((x, y) => keyComparer.Compare(GetKeyForItem(x), GetKeyForItem(y)));
+            Comparer2<TItem> comparer = new Comparer2<TItem>((x, y) => keyComparer.Compare(GetKeyForItem(x), GetKeyForItem(y)));
             Sort(comparer);
         }
 
         public void SortByKeys(Comparison<TKey> keyComparison)
         {
-            var comparer = new Comparer2<TItem>((x, y) => keyComparison(GetKeyForItem(x), GetKeyForItem(y)));
+            Comparer2<TItem> comparer = new Comparer2<TItem>((x, y) => keyComparison(GetKeyForItem(x), GetKeyForItem(y)));
             Sort(comparer);
         }
 
         public void Sort()
         {
-            var comparer = Comparer<TItem>.Default;
+            Comparer<TItem> comparer = Comparer<TItem>.Default;
             Sort(comparer);
         }
 
         public void Sort(Comparison<TItem> comparison)
         {
-            var newComparer = new Comparer2<TItem>((x, y) => comparison(x, y));
+            Comparer2<TItem> newComparer = new Comparer2<TItem>((x, y) => comparison(x, y));
             Sort(newComparer);
         }
 
@@ -444,7 +444,7 @@ namespace UAssetAPI
             {
                 throw new ArgumentException("The index is outside the bounds of the dictionary: {0}".FormatWith(index));
             }
-            var kvp = new KeyValuePair<TKey, TValue>(_keyedCollection[index].Key, value);
+            KeyValuePair<TKey, TValue> kvp = new KeyValuePair<TKey, TValue>(_keyedCollection[index].Key, value);
             _keyedCollection[index] = kvp;
         }
 
@@ -489,7 +489,7 @@ namespace UAssetAPI
             {
                 throw new ArgumentException("The given key is not present in the dictionary: {0}".FormatWith(key));
             }
-            var kvp = _keyedCollection[key];
+            KeyValuePair<TKey, TValue> kvp = _keyedCollection[key];
             return kvp.Value;
         }
 
@@ -500,8 +500,8 @@ namespace UAssetAPI
         /// <param name="value">The the value to set.</param>
         public void SetValue(TKey key, TValue value)
         {
-            var kvp = new KeyValuePair<TKey, TValue>(key, value);
-            var idx = IndexOf(key);
+            KeyValuePair<TKey, TValue> kvp = new KeyValuePair<TKey, TValue>(key, value);
+            int idx = IndexOf(key);
             if (idx > -1)
             {
                 _keyedCollection[idx] = kvp;
@@ -557,7 +557,7 @@ namespace UAssetAPI
 
         public void SortValues()
         {
-            var comparer = Comparer<TValue>.Default;
+            Comparer<TValue> comparer = Comparer<TValue>.Default;
             SortValues(comparer);
         }
 

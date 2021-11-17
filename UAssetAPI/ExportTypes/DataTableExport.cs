@@ -69,7 +69,7 @@ namespace UAssetAPI
             for (int i = 0; i < numEntries; i++)
             {
                 FName rowName = reader.ReadFName();
-                var nextStruct = new StructPropertyData(rowName)
+                StructPropertyData nextStruct = new StructPropertyData(rowName)
                 {
                     StructType = decidedStructType
                 };
@@ -98,7 +98,7 @@ namespace UAssetAPI
             writer.Write(Table.Data.Count);
             for (int i = 0; i < Table.Data.Count; i++)
             {
-                var thisDataTableEntry = Table.Data[i];
+                StructPropertyData thisDataTableEntry = Table.Data[i];
                 thisDataTableEntry.StructType = decidedStructType;
                 writer.Write(thisDataTableEntry.Name);
                 thisDataTableEntry.Write(writer, false);

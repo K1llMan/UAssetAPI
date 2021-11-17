@@ -65,10 +65,10 @@ namespace UAssetAPI
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var dictionary = new TMap<TKey, TValue>();
+            TMap<TKey, TValue> dictionary = new TMap<TKey, TValue>();
             JToken tokens = JToken.Load(reader);
 
-            foreach (var eachToken in tokens)
+            foreach (JToken eachToken in tokens)
             {
                 TKey key = eachToken[0].ToObject<TKey>(serializer);
                 TValue value = eachToken[1].ToObject<TValue>(serializer);

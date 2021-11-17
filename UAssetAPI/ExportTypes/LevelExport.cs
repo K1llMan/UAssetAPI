@@ -54,9 +54,9 @@ namespace UAssetAPI
                 IndexData.Add(reader.ReadInt32());
             }
 
-            var nms = reader.ReadFString();
+            FString nms = reader.ReadFString();
             reader.ReadInt32(); // null
-            var val = reader.ReadFString();
+            FString val = reader.ReadFString();
             LevelType = new NamespacedString(nms, val);
 
             reader.ReadInt64(); // null

@@ -44,7 +44,7 @@ namespace UAssetAPI.PropertyTypes
             int numEntries = reader.ReadInt32();
             if (ArrayType.Value.Value == "StructProperty")
             {
-                var results = new PropertyData[numEntries];
+                PropertyData[] results = new PropertyData[numEntries];
                 FName name = reader.ReadFName();
                 if (name.Value.Value.Equals("None"))
                 {
@@ -70,7 +70,7 @@ namespace UAssetAPI.PropertyTypes
                 {
                     for (int i = 0; i < numEntries; i++)
                     {
-                        var data = new StructPropertyData(name, fullType);
+                        StructPropertyData data = new StructPropertyData(name, fullType);
                         data.Offset = reader.BaseStream.Position;
                         data.Read(reader, false, structLength);
                         data.StructGUID = structGUID;
@@ -82,7 +82,7 @@ namespace UAssetAPI.PropertyTypes
             }
             else
             {
-                var results = new PropertyData[numEntries];
+                PropertyData[] results = new PropertyData[numEntries];
                 if (numEntries > 0)
                 {
                     int averageSizeEstimate1 = (int)(leng1 / numEntries);

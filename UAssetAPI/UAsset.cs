@@ -288,7 +288,7 @@ namespace UAssetAPI
             parentClassPath = null;
             parentClassExportName = null;
 
-            var bgcCat = GetClassExport();
+            ClassExport bgcCat = GetClassExport();
             if (bgcCat == null) return;
 
             Import parentClassLink = bgcCat.SuperStruct.ToImport(this);
@@ -362,7 +362,7 @@ namespace UAssetAPI
             for (int i = allVals.Length - 1; i >= 0; i--)
             {
                 T val = allVals[i];
-                var attributes = customVersionEnumType.GetMember(val.ToString())?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
+                object[] attributes = customVersionEnumType.GetMember(val.ToString())?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
                 if (attributes == null || attributes.Length <= 0) continue;
                 if (EngineVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return val;
             }
@@ -738,8 +738,8 @@ namespace UAssetAPI
                 numCustomVersions = reader.ReadInt32();
                 for (int i = 0; i < numCustomVersions; i++)
                 {
-                    var customVersionID = new Guid(reader.ReadBytes(16));
-                    var customVersionNumber = reader.ReadInt32();
+                    Guid customVersionID = new Guid(reader.ReadBytes(16));
+                    int customVersionNumber = reader.ReadInt32();
                     CustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
                 }
             }
@@ -888,7 +888,7 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(ExportOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ExportCount; i++)
                 {
-                    var newExport = new Export(this, new byte[0]);
+                    Export newExport = new Export(this, new byte[0]);
                     newExport.ClassIndex = new FPackageIndex(reader.ReadInt32());
                     newExport.SuperIndex = new FPackageIndex(reader.ReadInt32());
                     if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
@@ -1038,7 +1038,7 @@ namespace UAssetAPI
                             case "BlueprintGeneratedClass":
                             case "WidgetBlueprintGeneratedClass":
                             case "AnimBlueprintGeneratedClass":
-                                var bgc = Exports[i].ConvertToChildExport<ClassExport>();
+                                ClassExport bgc = Exports[i].ConvertToChildExport<ClassExport>();
                                 Exports[i] = bgc;
                                 Exports[i].Read(reader, (int)nextStarting);
 
@@ -1115,7 +1115,7 @@ namespace UAssetAPI
         /// <returns>A byte array which represents the serialized binary data of the initial portion of the asset.</returns>
         private byte[] MakeHeader()
         {
-            var stre = new MemoryStream(this.NameOffset);
+            MemoryStream stre = new MemoryStream(this.NameOffset);
             AssetBinaryWriter writer = new AssetBinaryWriter(stre, this);
 
             writer.Write(UAsset.UASSET_MAGIC);
@@ -1249,7 +1249,7 @@ namespace UAssetAPI
         /// <returns>A stream that the asset has been serialized to.</returns>
         public MemoryStream WriteData()
         {
-            var stre = new MemoryStream();
+            MemoryStream stre = new MemoryStream();
             AssetBinaryWriter writer = new AssetBinaryWriter(stre, this);
 
             // Header
@@ -1521,7 +1521,7 @@ namespace UAssetAPI
                 UseSeparateBulkDataFiles = false;
                 try
                 {
-                    var targetFile = Path.ChangeExtension(p, "uexp");
+                    string targetFile = Path.ChangeExtension(p, "uexp");
                     if (File.Exists(targetFile))
                     {
                         using (FileStream newStream = File.Open(targetFile, FileMode.Open))
@@ -1626,12 +1626,12 @@ namespace UAssetAPI
         /// <param name="stream">A stream containing serialized JSON string to parse.</param>
         public static UAsset DeserializeJson(Stream stream)
         {
-            var serializer = JsonSerializer.Create(jsonSettings);
+            JsonSerializer serializer = JsonSerializer.Create(jsonSettings);
             UAsset res;
 
-            using (var sr = new StreamReader(stream))
+            using (StreamReader sr = new StreamReader(stream))
             {
-                using (var jsonTextReader = new JsonTextReader(sr))
+                using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
                 {
                     res = serializer.Deserialize<UAsset>(jsonTextReader);
                 }
