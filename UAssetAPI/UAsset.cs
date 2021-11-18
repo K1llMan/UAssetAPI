@@ -1080,6 +1080,10 @@ namespace UAssetAPI
                                 Exports[i] = Exports[i].ConvertToChildExport<FunctionExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
+                            case "MaterialInstanceConstant":
+                                Exports[i] = Exports[i].ConvertToChildExport<MaterialInstanceConstant>();
+                                Exports[i].Read(reader, (int)nextStarting);
+                                break;
                             default:
                                 Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
