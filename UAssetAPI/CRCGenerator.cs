@@ -25,7 +25,7 @@ namespace UAssetAPI
 
         private static char ToUpper(char input)
         {
-            return (char)((uint)input - ((((uint)input - 'a' < 26u) ? 1 : 0) << 5));
+            return (char)((uint)input - (((uint)input - 'a' < 26u ? 1 : 0) << 5));
         }
 
         private static uint Strihash_DEPRECATED(string text, Encoding encoding)

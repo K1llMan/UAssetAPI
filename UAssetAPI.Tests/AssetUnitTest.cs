@@ -1,16 +1,33 @@
-using System;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace UAssetAPI.Tests
 {
-    [CollectionDefinition("Basic Test Harness")]
-    public class BasicTestCollection : ICollectionFixture<AssetUnitTestHarness>
+    [CollectionDefinition("Asset Test Harness")]
+    public class AssetTestCollection : ICollectionFixture<AssetUnitTestHarness>
     {
     }
 
     public class AssetUnitTest
     {
+        #region Common functions
+
+        /// <summary>
+        /// Determines whether or not all exports in an asset have parsed correctly.
+        /// </summary>
+        /// <param name="tester">The asset to test.</param>
+        /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
+        public bool CheckAllExportsParsedCorrectly(UAsset tester)
+        {
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport is RawExport) return false;
+            }
+            return true;
+        }
+
+        #endregion Common functions
+
         public AssetUnitTest(AssetUnitTestHarness fixture, ITestOutputHelper output)
         {
             Fixture = fixture;

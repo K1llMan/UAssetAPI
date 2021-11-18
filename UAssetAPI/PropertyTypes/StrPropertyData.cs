@@ -51,7 +51,7 @@ namespace UAssetAPI.PropertyTypes
         public override void FromString(string[] d, UAsset asset)
         {
             Encoding encoding = Encoding.ASCII;
-            if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
+            if (d.Length >= 5) encoding = d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII;
             Value = FString.FromString(d[0], encoding);
         }
     }

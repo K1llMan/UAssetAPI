@@ -1031,7 +1031,7 @@ namespace UAssetAPI
                     try
                     {
                         long nextStarting = reader.BaseStream.Length - 4;
-                        if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].SerialOffset;
+                        if (Exports.Count - 1 > i) nextStarting = Exports[i + 1].SerialOffset;
 
                         switch (Exports[i].ClassIndex.IsImport() ? Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value : Exports[i].ClassIndex.Index.ToString())
                         {
@@ -1450,7 +1450,7 @@ namespace UAssetAPI
                 {
                     Export us = this.Exports[i];
                     long nextLoc = this.BulkDataStartOffset;
-                    if ((this.Exports.Count - 1) > i) nextLoc = categoryStarts[i + 1];
+                    if (this.Exports.Count - 1 > i) nextLoc = categoryStarts[i + 1];
 
                     us.SerialOffset = categoryStarts[i];
                     us.SerialSize = nextLoc - categoryStarts[i];
@@ -1605,7 +1605,7 @@ namespace UAssetAPI
         /// <returns>A serialized JSON string that represents the asset.</returns>
         public string SerializeJson(Formatting jsonFormatting = Formatting.None)
         {
-            Info = "Serialized with UAssetAPI " + typeof(PropertyData).Assembly.GetName().Version + (string.IsNullOrEmpty(UAPUtils.CurrentCommit) ? "" : (" (" + UAPUtils.CurrentCommit + ")"));
+            Info = "Serialized with UAssetAPI " + typeof(PropertyData).Assembly.GetName().Version + (string.IsNullOrEmpty(UAPUtils.CurrentCommit) ? "" : " (" + UAPUtils.CurrentCommit + ")");
             return JsonConvert.SerializeObject(this, jsonFormatting, jsonSettings);
         }
 

@@ -119,7 +119,7 @@ namespace UAssetAPI
             {
                 interfacesStart = reader.BaseStream.Position;
                 numInterfaces = reader.ReadInt32();
-                reader.BaseStream.Seek(interfacesStart + sizeof(int) + numInterfaces * (sizeof(int) * 3), SeekOrigin.Begin);
+                reader.BaseStream.Seek(interfacesStart + sizeof(int) + numInterfaces * sizeof(int) * 3, SeekOrigin.Begin);
             }
 
             // Linking procedure here; I don't think anything is really serialized during this

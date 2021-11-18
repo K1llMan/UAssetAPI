@@ -39,7 +39,7 @@ namespace UAssetAPI.StructTypes
             writer.Write(InputName);
             writer.Write(Extras); // always 0s
             writer.Write(ExpressionName);
-            return (sizeof(int) * 2) * 2 + sizeof(int) + 20;
+            return sizeof(int) * 2 * 2 + sizeof(int) + 20;
         }
 
         protected override void HandleCloned(PropertyData res)

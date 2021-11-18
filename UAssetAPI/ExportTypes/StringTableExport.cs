@@ -60,7 +60,7 @@ namespace UAssetAPI
             writer.Write(Data2.Name);
 
             writer.Write(Data2.Count / 2);
-            int lenData = (Data2.Count / 2) * 2;
+            int lenData = Data2.Count / 2 * 2;
             for (int i = 0; i < lenData; i++)
             {
                 writer.Write(Data2[i]);
