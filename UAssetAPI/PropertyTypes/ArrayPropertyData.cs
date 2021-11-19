@@ -52,7 +52,8 @@ namespace UAssetAPI.PropertyTypes
                     return;
                 }
 
-                if (reader.ReadFName().Value.Value != ArrayType.Value.Value) throw new FormatException("Invalid array type");
+                if (reader.ReadFName().Value.Value != ArrayType.Value.Value) 
+                    throw new FormatException("Invalid array type");
                 long structLength = reader.ReadInt64(); // length value
 
                 FName fullType = reader.ReadFName();
@@ -70,9 +71,24 @@ namespace UAssetAPI.PropertyTypes
                 {
                     for (int i = 0; i < numEntries; i++)
                     {
-                        StructPropertyData data = new StructPropertyData(name, fullType);
-                        data.Offset = reader.BaseStream.Position;
-                        data.Read(reader, false, structLength);
+                        StructPropertyData data = new StructPropertyData(name, fullType)
+                        {
+                            Offset = reader.BaseStream.Position
+                        };
+
+                        try
+                        {
+                            data.Read(reader, false, structLength);
+                        }
+                        catch (Exception e)
+                        {
+#if DEBUG
+                            Console.WriteLine(e);
+                            reader.BaseStream.Seek(data.Offset + structLength, SeekOrigin.Begin);
+#else
+                            throw;
+#endif
+                        }
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }

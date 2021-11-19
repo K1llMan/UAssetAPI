@@ -124,8 +124,13 @@ namespace UAssetAPI
         private static FieldInfo[] _allFields = null;
         private static void InitAllFields()
         {
-            if (_allFields != null) return;
-            _allFields = typeof(Export).GetFields().Where(fld => fld.IsDefined(typeof(FObjectExportFieldAttribute), true)).OrderBy(fld => ((FObjectExportFieldAttribute[])fld.GetCustomAttributes(typeof(FObjectExportFieldAttribute), true))[0].DisplayingIndex).ToArray();
+            if (_allFields != null) 
+                return;
+            _allFields = typeof(Export)
+                .GetFields()
+                .Where(fld => fld.IsDefined(typeof(FObjectExportFieldAttribute), true))
+                .OrderBy(fld => ((FObjectExportFieldAttribute[])fld.GetCustomAttributes(typeof(FObjectExportFieldAttribute), true))[0].DisplayingIndex)
+                .ToArray();
         }
 
         public static FieldInfo[] GetAllObjectExportFields()
@@ -163,8 +168,8 @@ namespace UAssetAPI
         public object Clone()
         {
             Export res = (Export)MemberwiseClone();
-            res.Extras = (byte[])this.Extras.Clone();
-            res.PackageGuid = new Guid(this.PackageGuid.ToByteArray());
+            res.Extras = (byte[])Extras.Clone();
+            res.PackageGuid = new Guid(PackageGuid.ToByteArray());
             return res;
         }
 
@@ -177,11 +182,14 @@ namespace UAssetAPI
         {
             InitAllFields();
 
-            Export res = new T();
-            res.Asset = this.Asset;
-            res.Extras = this.Extras;
-            res.ObjectName = this.ObjectName;
-            res.OuterIndex = this.OuterIndex;
+            Export res = new T
+            {
+                Asset = Asset,
+                Extras = Extras,
+                ObjectName = ObjectName,
+                OuterIndex = OuterIndex
+            };
+
             foreach (FieldInfo info in _allFields)
             {
                 info.SetValue(res, info.GetValue(this));

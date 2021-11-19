@@ -37,7 +37,8 @@ namespace UAssetAPI.StructTypes
         private void ReadOnce(AssetBinaryReader reader, Type T, long offset)
         {
             PropertyData data = Activator.CreateInstance(T, Name) as PropertyData;
-            if (data == null) return;
+            if (data == null) 
+                return;
             data.Offset = offset;
             data.Read(reader, false, 0);
             Value = new List<PropertyData> { data };
@@ -67,7 +68,8 @@ namespace UAssetAPI.StructTypes
             MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);
             bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
-            if (StructType.Value.Value == "RichCurveKey" && reader.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+            if (StructType.Value.Value == "RichCurveKey" && reader.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) 
+                hasCustomStructSerialization = false;
 
             if (leng1 == 0)
             {

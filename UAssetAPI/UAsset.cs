@@ -1080,10 +1080,6 @@ namespace UAssetAPI
                                 Exports[i] = Exports[i].ConvertToChildExport<FunctionExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
-                            case "MaterialInstanceConstant":
-                                Exports[i] = Exports[i].ConvertToChildExport<MaterialInstanceConstant>();
-                                Exports[i].Read(reader, (int)nextStarting);
-                                break;
                             default:
                                 Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
@@ -1103,7 +1099,7 @@ namespace UAssetAPI
                     catch (Exception ex)
                     {
 #if DEBUG
-                        Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
+                        Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex);
 #endif
                         reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
                         Exports[i] = Exports[i].ConvertToChildExport<RawExport>();

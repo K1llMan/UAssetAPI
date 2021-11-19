@@ -68,18 +68,23 @@ namespace UAssetAPI
                 for (int j = 0; j < allPropertyDataTypes.Length; j++)
                 {
                     Type currentPropertyDataType = allPropertyDataTypes[j];
-                    if (currentPropertyDataType == null || currentPropertyDataType.ContainsGenericParameters) continue;
+                    if (currentPropertyDataType == null || currentPropertyDataType.ContainsGenericParameters) 
+                        continue;
 
                     object testInstance = Activator.CreateInstance(currentPropertyDataType);
 
                     FName returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(testInstance, null) as FName;
-                    if (returnedPropType == null) continue;
+                    if (returnedPropType == null) 
+                        continue;
                     bool? returnedHasCustomStructSerialization = currentPropertyDataType.GetProperty("HasCustomStructSerialization")?.GetValue(testInstance, null) as bool?;
-                    if (returnedHasCustomStructSerialization == null) continue;
+                    if (returnedHasCustomStructSerialization == null) 
+                        continue;
 
-                    RegistryEntry res = new RegistryEntry();
-                    res.PropertyType = currentPropertyDataType;
-                    res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
+                    RegistryEntry res = new RegistryEntry
+                    {
+                        PropertyType = currentPropertyDataType,
+                        HasCustomStructSerialization = (bool) returnedHasCustomStructSerialization
+                    };
                     _propertyTypeRegistry[returnedPropType.Value.Value] = res;
                 }
             }
@@ -112,11 +117,13 @@ namespace UAssetAPI
         public static PropertyData TypeToClass(FName type, FName name, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
             long startingOffset = 0;
-            if (reader != null) startingOffset = reader.BaseStream.Position;
+            if (reader != null) 
+                startingOffset = reader.BaseStream.Position;
 
-            if (type.Value.Value == "None") return null;
+            if (type.Value.Value == "None") 
+                return null;
 
-            PropertyData data = null;
+            PropertyData data;
             if (PropertyTypeRegistry.ContainsKey(type.Value.Value))
             {
                 data = (PropertyData)Activator.CreateInstance(PropertyTypeRegistry[type.Value.Value].PropertyType, name);
@@ -125,13 +132,16 @@ namespace UAssetAPI
             {
 #if DEBUG
                 Debug.WriteLine("-----------");
-                Debug.WriteLine("Parsing unknown type " + type.ToString());
+                Debug.WriteLine("Parsing unknown type " + type);
                 Debug.WriteLine("Length: " + leng);
-                if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
-                Debug.WriteLine("Last type: " + lastType.PropertyType?.ToString());
-                if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType?.ToString());
+                if (reader != null) 
+                    Debug.WriteLine("Pos: " + reader.BaseStream.Position);
+                Debug.WriteLine("Last type: " + lastType.PropertyType);
+                if (lastType is StructPropertyData) 
+                    Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType);
                 Debug.WriteLine("-----------");
 #endif
+
                 if (leng > 0)
                 {
                     data = new UnknownPropertyData(name);
@@ -139,8 +149,9 @@ namespace UAssetAPI
                 }
                 else
                 {
-                    if (reader == null) throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + ")");
-                    throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + " at " + reader.BaseStream.Position + ")");
+                    if (reader == null)
+                        throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
+                    throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
                 }
             }
 
@@ -152,7 +163,8 @@ namespace UAssetAPI
             if (reader != null)
             {
                 data.Read(reader, includeHeader, leng);
-                if (data.Offset == 0) data.Offset = startingOffset; // fallback
+                if (data.Offset == 0) 
+                    data.Offset = startingOffset; // fallback
             }
 
             return data;
@@ -168,7 +180,8 @@ namespace UAssetAPI
         {
             long startingOffset = reader.BaseStream.Position;
             FName name = reader.ReadFName();
-            if (name.Value.Value == "None") return null;
+            if (name.Value.Value == "None")
+                return null;
 
             FName type = reader.ReadFName();
 
@@ -176,6 +189,7 @@ namespace UAssetAPI
             int duplicationIndex = reader.ReadInt32();
             PropertyData result = TypeToClass(type, name, reader.Asset, reader, leng, duplicationIndex, includeHeader);
             result.Offset = startingOffset;
+
             return result;
         }
 
