@@ -22,8 +22,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("UnknownProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("UnknownProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public void SetSerializingPropertyType(FName newType)
         {

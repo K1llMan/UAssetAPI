@@ -10,7 +10,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_CrossInterfaceCast; } }
+        public override EExprToken Token => EExprToken.EX_CrossInterfaceCast;
 
         /// <summary>
         /// A pointer to the interface class to convert to.

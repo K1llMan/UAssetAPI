@@ -51,7 +51,7 @@ namespace UAssetAPI
             base.Read(reader, nextStarting);
 
             // Find an ObjectProperty named RowStruct
-            FName decidedStructType = new FName("Generic");
+            FName decidedStructType = new("Generic");
             foreach (PropertyData thisData in Data)
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData && thisObjData.Value.IsImport())
@@ -69,7 +69,7 @@ namespace UAssetAPI
             for (int i = 0; i < numEntries; i++)
             {
                 FName rowName = reader.ReadFName();
-                StructPropertyData nextStruct = new StructPropertyData(rowName)
+                StructPropertyData nextStruct = new(rowName)
                 {
                     StructType = decidedStructType
                 };
@@ -83,7 +83,7 @@ namespace UAssetAPI
             base.Write(writer);
 
             // Find an ObjectProperty named RowStruct
-            FName decidedStructType = new FName("Generic");
+            FName decidedStructType = new("Generic");
             foreach (PropertyData thisData in Data)
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)

@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes
     public class AssetObjectPropertyData : PropertyData<FString>
     {
         [JsonProperty]
-        public uint ID = 0;
+        public uint ID;
 
         public AssetObjectPropertyData(FName name) : base(name)
         {
@@ -20,8 +20,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("AssetObjectProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("AssetObjectProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -61,7 +61,7 @@ namespace UAssetAPI.PropertyTypes
     public class SoftObjectPropertyData : PropertyData<FName>
     {
         [JsonProperty]
-        public uint ID = 0;
+        public uint ID;
 
         public SoftObjectPropertyData(FName name) : base(name)
         {
@@ -73,8 +73,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SoftObjectProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("SoftObjectProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -101,7 +101,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override string ToString()
         {
-            return "(" + Value.ToString() + ", " + ID + ")";
+            return "(" + Value + ", " + ID + ")";
         }
 
         public override void FromString(string[] d, UAsset asset)

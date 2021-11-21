@@ -52,7 +52,7 @@ namespace UAssetAPI.StructTypes
 
         public object Clone()
         {
-            return new LinearColor(this.R, this.G, this.B, this.A);
+            return new LinearColor(R, G, B, A);
         }
     }
 
@@ -68,9 +68,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("LinearColor");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("LinearColor");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

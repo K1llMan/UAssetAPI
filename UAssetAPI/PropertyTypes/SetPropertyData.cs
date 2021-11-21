@@ -23,8 +23,8 @@ namespace UAssetAPI.PropertyTypes
             RemovedItems = new PropertyData[0];
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SetProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("SetProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -34,7 +34,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte(); // null byte
             }
 
-            ArrayPropertyData removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
+            ArrayPropertyData removedItemsDummy = new(new FName("RemovedItems"));
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Read(reader, false, leng1, leng2);
             RemovedItems = removedItemsDummy.Value;
@@ -52,7 +52,7 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            ArrayPropertyData removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
+            ArrayPropertyData removedItemsDummy = new(new FName("RemovedItems"));
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.DummyStruct = RemovedItemsDummyStruct;
             removedItemsDummy.Value = RemovedItems;
@@ -66,14 +66,14 @@ namespace UAssetAPI.PropertyTypes
             base.HandleCloned(res);
             SetPropertyData cloningProperty = (SetPropertyData)res;
 
-            PropertyData[] newData = new PropertyData[this.RemovedItems.Length];
-            for (int i = 0; i < this.Value.Length; i++)
+            PropertyData[] newData = new PropertyData[RemovedItems.Length];
+            for (int i = 0; i < Value.Length; i++)
             {
-                newData[i] = (PropertyData)this.Value[i].Clone();
+                newData[i] = (PropertyData)Value[i].Clone();
             }
             cloningProperty.RemovedItems = newData;
 
-            cloningProperty.RemovedItemsDummyStruct = (StructPropertyData)this.RemovedItemsDummyStruct.Clone();
+            cloningProperty.RemovedItemsDummyStruct = (StructPropertyData)RemovedItemsDummyStruct.Clone();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace UAssetAPI
     [AttributeUsage(AttributeTargets.Field)]
     internal class FObjectExportFieldAttribute : Attribute
     {
-        internal int DisplayingIndex = 0;
+        internal int DisplayingIndex;
         internal FObjectExportFieldAttribute(int displayingIndex)
         {
             DisplayingIndex = displayingIndex;
@@ -121,7 +121,7 @@ namespace UAssetAPI
 
         }
 
-        private static FieldInfo[] _allFields = null;
+        private static FieldInfo[] _allFields;
         private static void InitAllFields()
         {
             if (_allFields != null) 
@@ -156,11 +156,11 @@ namespace UAssetAPI
         {
             InitAllFields();
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (FieldInfo info in _allFields)
             {
                 object value = info.GetValue(this) ?? "(null)";
-                sb.AppendLine(info.Name + ": " + value.ToString());
+                sb.AppendLine(info.Name + ": " + value);
             }
             return sb.ToString();
         }

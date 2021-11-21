@@ -14,13 +14,13 @@ namespace UAssetAPI.PropertyTypes
         /// The name of this property.
         /// </summary>
         [JsonProperty]
-        public FName Name = new FName("");
+        public FName Name = new("");
 
         /// <summary>
         /// The duplication index of this property. Used to distinguish properties with the same name in the same struct.
         /// </summary>
         [JsonProperty]
-        public int DuplicationIndex = 0;
+        public int DuplicationIndex;
 
         /// <summary>
         /// The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -41,7 +41,8 @@ namespace UAssetAPI.PropertyTypes
 
         public T GetObject<T>()
         {
-            if (RawValue is null) return default(T);
+            if (RawValue is null) 
+                return default(T);
             return (T)RawValue;
         }
 
@@ -55,15 +56,16 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static FName FallbackPropertyType = new FName(string.Empty);
+        private static FName FallbackPropertyType = new(string.Empty);
         /// <summary>
         /// Determines whether or not this particular property has custom serialization within a StructProperty.
         /// </summary>
-        public virtual bool HasCustomStructSerialization { get { return false; } }
+        public virtual bool HasCustomStructSerialization => false;
+
         /// <summary>
         /// The type of this property as an FName.
         /// </summary>
-        public virtual FName PropertyType { get { return FallbackPropertyType; } }
+        public virtual FName PropertyType => FallbackPropertyType;
 
         /// <summary>
         /// Reads out a property from a BinaryReader.
@@ -105,7 +107,7 @@ namespace UAssetAPI.PropertyTypes
         public object Clone()
         {
             PropertyData res = (PropertyData)MemberwiseClone();
-            res.Name = (FName)this.Name.Clone();
+            res.Name = (FName)Name.Clone();
             if (res.RawValue is ICloneable cloneableValue) 
                 res.RawValue = cloneableValue.Clone();
 

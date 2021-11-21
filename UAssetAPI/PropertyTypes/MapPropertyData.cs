@@ -43,7 +43,7 @@ namespace UAssetAPI.PropertyTypes
         }
 
         [JsonProperty]
-        public PropertyData[] KeysToRemove = null;
+        public PropertyData[] KeysToRemove;
 
         public MapPropertyData(FName name) : base(name)
         {
@@ -55,8 +55,8 @@ namespace UAssetAPI.PropertyTypes
             Value = new TMap<PropertyData, PropertyData>();
         }
 
-        private static readonly FName CurrentPropertyType = new FName("MapProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("MapProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         private PropertyData MapTypeToClass(FName type, FName name, AssetBinaryReader reader, int leng, bool includeHeader, bool isKey)
         {
@@ -79,7 +79,7 @@ namespace UAssetAPI.PropertyTypes
 
                     if (strucType == null) strucType = new FName("Generic");
 
-                    StructPropertyData data = new StructPropertyData(name, strucType);
+                    StructPropertyData data = new(name, strucType);
                     data.Offset = reader.BaseStream.Position;
                     data.Read(reader, false, 1);
                     return data;
@@ -93,7 +93,7 @@ namespace UAssetAPI.PropertyTypes
 
         private TMap<PropertyData, PropertyData> ReadRawMap(AssetBinaryReader reader, FName type1, FName type2, int numEntries)
         {
-            TMap<PropertyData, PropertyData> resultingDict = new TMap<PropertyData, PropertyData>();
+            TMap<PropertyData, PropertyData> resultingDict = new();
 
             PropertyData data1 = null;
             PropertyData data2 = null;
@@ -183,17 +183,17 @@ namespace UAssetAPI.PropertyTypes
         {
             MapPropertyData cloningProperty = (MapPropertyData)res;
 
-            TMap<PropertyData, PropertyData> newDict = new TMap<PropertyData, PropertyData>();
-            foreach (KeyValuePair<PropertyData, PropertyData> entry in this.Value)
+            TMap<PropertyData, PropertyData> newDict = new();
+            foreach (KeyValuePair<PropertyData, PropertyData> entry in Value)
             {
                 newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
             }
             cloningProperty.Value = newDict;
 
-            cloningProperty.KeysToRemove = (PropertyData[])this.KeysToRemove.Clone();
+            cloningProperty.KeysToRemove = (PropertyData[])KeysToRemove.Clone();
 
-            cloningProperty.KeyType = (FName)this.KeyType.Clone();
-            cloningProperty.ValueType = (FName)this.ValueType.Clone();
+            cloningProperty.KeyType = (FName)KeyType.Clone();
+            cloningProperty.ValueType = (FName)ValueType.Clone();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_JumpIfNot; } }
+        public override EExprToken Token => EExprToken.EX_JumpIfNot;
 
         /// <summary>
         /// The offset to jump to if the provided expression evaluates to false.

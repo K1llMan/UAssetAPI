@@ -8,7 +8,7 @@
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_LocalVirtualFunction; } }
+        public override EExprToken Token => EExprToken.EX_LocalVirtualFunction;
 
         public EX_LocalVirtualFunction() : base()
         {

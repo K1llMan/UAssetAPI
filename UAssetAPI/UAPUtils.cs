@@ -12,8 +12,8 @@ namespace UAssetAPI
 
         public static List<T> FindAllInstances<T>(object parent) where T : class
         {
-            HashSet<object> yaExplorado = new HashSet<object>();
-            List<T> res = new List<T>();
+            HashSet<object> yaExplorado = new();
+            List<T> res = new();
 
             FindAllInstances(parent, yaExplorado, res);
 
@@ -57,14 +57,15 @@ namespace UAssetAPI
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
-            else if (val.CompareTo(max) > 0) return max;
-            else return val;
+            if (val.CompareTo(max) > 0) return max;
+            return val;
         }
 
         public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)
         {
             FString refer = new FPackageIndex(j).ToImport(asset).ObjectName.Value;
-            if (!asset.NameReferenceContains(refer)) return refer;
+            if (!asset.NameReferenceContains(refer)) 
+                return refer;
             return asset.GetNameReferenceWithoutZero(asset.SearchNameReference(refer));
         }
 

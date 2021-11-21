@@ -19,9 +19,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ScalarParameterValue");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ScalarParameterValue");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -30,7 +30,8 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            FScalarParameter data = new FScalarParameter {
+            FScalarParameter data = new()
+            {
                 Info = new FMaterialParameterInfo {
                     Name = reader.ReadFName(),
                     Association = (EMaterialParameterAssociation)reader.ReadByte(),
@@ -50,7 +51,15 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            return sizeof(short);
+            int here = (int)writer.BaseStream.Position;
+
+            writer.Write(Value.Info.Name);
+            writer.Write((byte)Value.Info.Association);
+            writer.Write(Value.Info.Index);
+            writer.Write(Value.Value);
+            writer.Write(Value.Guid.ToByteArray());
+
+            return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()

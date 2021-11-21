@@ -44,8 +44,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("MulticastDelegateProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("MulticastDelegateProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -97,10 +97,10 @@ namespace UAssetAPI.PropertyTypes
         {
             MulticastDelegatePropertyData cloningProperty = (MulticastDelegatePropertyData)res;
 
-            FMulticastDelegate[] newData = new FMulticastDelegate[this.Value.Length];
-            for (int i = 0; i < this.Value.Length; i++)
+            FMulticastDelegate[] newData = new FMulticastDelegate[Value.Length];
+            for (int i = 0; i < Value.Length; i++)
             {
-                newData[i] = new FMulticastDelegate(this.Value[i].Number, (FName)this.Value[i].Delegate.Clone());
+                newData[i] = new FMulticastDelegate(Value[i].Number, (FName)Value[i].Delegate.Clone());
             }
 
             cloningProperty.Value = newData;

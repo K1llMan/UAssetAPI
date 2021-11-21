@@ -31,7 +31,7 @@ namespace UAssetAPI
         /// <summary>
         /// The bytecode instructions contained within this struct.
         /// </summary>
-        public Kismet.Bytecode.KismetExpression[] ScriptBytecode;
+        public KismetExpression[] ScriptBytecode;
 
         /// <summary>
         /// Bytecode size in total in deserialized memory. Filled out in lieu of <see cref="ScriptBytecode"/> if an error occurs during bytecode parsing.
@@ -100,7 +100,7 @@ namespace UAssetAPI
             {
                 if (ParseBytecode)
                 {
-                    List<KismetExpression> tempCode = new List<Kismet.Bytecode.KismetExpression>();
+                    List<KismetExpression> tempCode = new();
                     while (reader.BaseStream.Position - startedReading < scriptStorageSize)
                     {
                         tempCode.Add(ExpressionSerializer.ReadExpression(reader));

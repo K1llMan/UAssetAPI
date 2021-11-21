@@ -21,8 +21,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("EnumProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("EnumProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -78,7 +78,7 @@ namespace UAssetAPI.PropertyTypes
         protected override void HandleCloned(PropertyData res)
         {
             EnumPropertyData cloningProperty = (EnumPropertyData)res;
-            cloningProperty.EnumType = (FName)this.EnumType?.Clone();
+            cloningProperty.EnumType = (FName)EnumType?.Clone();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_DynamicCast; } }
+        public override EExprToken Token => EExprToken.EX_DynamicCast;
 
         /// <summary>
         /// A pointer to the relevant class (UClass*).

@@ -8,7 +8,7 @@
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_True; } }
+        public override EExprToken Token => EExprToken.EX_True;
 
         public EX_True()
         {

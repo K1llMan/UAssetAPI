@@ -45,9 +45,9 @@ namespace UAssetAPI.StructTypes
         protected override void HandleCloned(PropertyData res)
         {
             MaterialInputPropertyData<T> cloningProperty = (MaterialInputPropertyData<T>)res;
-            cloningProperty.InputName = (FName)this.InputName.Clone();
-            cloningProperty.InputName = (FName)this.ExpressionName.Clone();
-            cloningProperty.Extras = (byte[])this.Extras.Clone();
+            cloningProperty.InputName = (FName)InputName.Clone();
+            cloningProperty.InputName = (FName)ExpressionName.Clone();
+            cloningProperty.Extras = (byte[])Extras.Clone();
         }
     }
 
@@ -63,9 +63,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ExpressionInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ExpressionInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -100,9 +100,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("MaterialAttributesInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("MaterialAttributesInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -137,9 +137,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ColorMaterialInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ColorMaterialInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -179,9 +179,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ScalarMaterialInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ScalarMaterialInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -221,9 +221,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ShadingModelMaterialInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ShadingModelMaterialInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -263,9 +263,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("VectorMaterialInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("VectorMaterialInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -305,9 +305,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("Vector2MaterialInput");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("Vector2MaterialInput");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

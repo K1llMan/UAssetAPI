@@ -11,7 +11,7 @@ namespace UAssetAPI.Kismet.Bytecode
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public virtual EExprToken Token { get { return EExprToken.EX_Nothing; } }
+        public virtual EExprToken Token => EExprToken.EX_Nothing;
 
         /// <summary>
         /// An optional tag which can be set on any expression in memory. This is for the user only, and has no bearing in the API itself.

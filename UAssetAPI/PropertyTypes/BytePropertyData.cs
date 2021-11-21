@@ -21,7 +21,7 @@ namespace UAssetAPI.PropertyTypes
         [JsonConverter(typeof(StringEnumConverter))]
         public BytePropertyType ByteType;
         [JsonProperty]
-        public int EnumType = 0;
+        public int EnumType;
 
         public BytePropertyData(FName name) : base(name)
         {
@@ -33,8 +33,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ByteProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ByteProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

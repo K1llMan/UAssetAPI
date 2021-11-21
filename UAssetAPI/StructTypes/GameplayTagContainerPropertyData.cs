@@ -16,9 +16,9 @@ namespace UAssetAPI.StructTypes
             Value = new FName[0];
         }
 
-        private static readonly FName CurrentPropertyType = new FName("GameplayTagContainer");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("GameplayTagContainer");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -66,10 +66,10 @@ namespace UAssetAPI.StructTypes
         {
             GameplayTagContainerPropertyData cloningProperty = (GameplayTagContainerPropertyData)res;
 
-            FName[] newData = new FName[this.Value.Length];
-            for (int i = 0; i < this.Value.Length; i++)
+            FName[] newData = new FName[Value.Length];
+            for (int i = 0; i < Value.Length; i++)
             {
-                newData[i] = (FName)this.Value[i].Clone();
+                newData[i] = (FName)Value[i].Clone();
             }
             cloningProperty.Value = newData;
         }

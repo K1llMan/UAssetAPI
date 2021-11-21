@@ -58,14 +58,11 @@ namespace UAssetAPI
             writer.WriteEndArray();
         }
 
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        public override bool CanRead => true;
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            TMap<TKey, TValue> dictionary = new TMap<TKey, TValue>();
+            TMap<TKey, TValue> dictionary = new();
             JToken tokens = JToken.Load(reader);
 
             foreach (JToken eachToken in tokens)

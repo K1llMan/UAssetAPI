@@ -8,7 +8,7 @@
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_ByteConst; } }
+        public override EExprToken Token => EExprToken.EX_ByteConst;
 
         public EX_ByteConst()
         {

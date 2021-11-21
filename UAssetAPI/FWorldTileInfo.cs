@@ -40,7 +40,7 @@ namespace UAssetAPI
 
         public void Write(AssetBinaryWriter writer, UAsset asset)
         {
-            writer.Write(this.Name);
+            writer.Write(Name);
             writer.Write(Reserved0);
             Reserved1.Write(writer, false);
 

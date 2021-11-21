@@ -11,7 +11,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_PopExecutionFlowIfNot; } }
+        public override EExprToken Token => EExprToken.EX_PopExecutionFlowIfNot;
 
         /// <summary>
         /// Expression to evaluate to determine whether or not a pop should be performed.

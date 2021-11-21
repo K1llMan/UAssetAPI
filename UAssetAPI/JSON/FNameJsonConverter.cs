@@ -16,10 +16,7 @@ namespace UAssetAPI
             writer.WriteValue(realVal is null ? "null" : realVal.ToString());
         }
 
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        public override bool CanRead => true;
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {

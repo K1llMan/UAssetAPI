@@ -11,7 +11,7 @@ namespace UAssetAPI
         /// <summary>
         /// Static map of custom version GUIDs to the object or enum that they represent in the Unreal Engine. This list is not necessarily exhaustive, so feel free to add to it if need be.
         /// </summary>
-        public static readonly Dictionary<Guid, string> GuidToCustomVersionStringMap = new Dictionary<Guid, string>()
+        public static readonly Dictionary<Guid, string> GuidToCustomVersionStringMap = new()
         {
             { UnusedCustomVersionKey, "UnusedCustomVersionKey" },
             { UAPUtils.GUID(0xB0D832E4, 0x1F894F0D, 0xACCF7EB7, 0x36FD4AA2), "FBlueprintsObjectVersion" },
@@ -88,7 +88,7 @@ namespace UAssetAPI
         }
 
         public Guid Key;
-        public string FriendlyName = null;
+        public string FriendlyName;
         public int Version;
 
         /// <summary>

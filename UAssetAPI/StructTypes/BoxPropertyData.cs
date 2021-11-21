@@ -19,9 +19,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("Box");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("Box");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -33,7 +33,7 @@ namespace UAssetAPI.StructTypes
             Value = new VectorPropertyData[2];
             for (int i = 0; i < 2; i++)
             {
-                VectorPropertyData next = new VectorPropertyData(Name);
+                VectorPropertyData next = new(Name);
                 next.Read(reader, false, 0);
                 Value[i] = next;
             }
@@ -76,10 +76,10 @@ namespace UAssetAPI.StructTypes
         {
             BoxPropertyData cloningProperty = (BoxPropertyData)res;
 
-            VectorPropertyData[] newData = new VectorPropertyData[this.Value.Length];
-            for (int i = 0; i < this.Value.Length; i++)
+            VectorPropertyData[] newData = new VectorPropertyData[Value.Length];
+            for (int i = 0; i < Value.Length; i++)
             {
-                newData[i] = (VectorPropertyData)this.Value[i].Clone();
+                newData[i] = (VectorPropertyData)Value[i].Clone();
             }
             cloningProperty.Value = newData;
         }

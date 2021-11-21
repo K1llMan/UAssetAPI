@@ -19,9 +19,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("MaterialTextureInfo");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("MaterialTextureInfo");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -30,7 +30,8 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            FMaterialTextureInfo data = new FMaterialTextureInfo {
+            FMaterialTextureInfo data = new()
+            {
                 SamplingScale = reader.ReadSingle(),
                 UVChannelIndex = reader.ReadInt32(),
                 TextureName = reader.ReadFName()
@@ -46,12 +47,18 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            return sizeof(short);
+            int here = (int)writer.BaseStream.Position;
+
+            writer.Write(Value.SamplingScale);
+            writer.Write(Value.UVChannelIndex);
+            writer.Write(Value.TextureName);
+
+            return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()
         {
-            return Convert.ToString(Value);
+            return Value.TextureName.Value.Value;
         }
 
         public override void FromString(string[] d, UAsset asset)

@@ -16,20 +16,21 @@ namespace UAssetAPI
 
         public override string ToString()
         {
-            if (this == null || Value == null) return NullCase;
-            return Value;
+            return Value ?? NullCase;
         }
 
         public override bool Equals(object obj)
         {
             if (obj is FString fStr)
             {
-                if (fStr == null) return false;
-                return this.Value == fStr.Value && this.Encoding == fStr.Encoding;
+                if (fStr == null) 
+                    return false;
+                return Value == fStr.Value && Encoding == fStr.Encoding;
             }
-            else if (obj is string str)
+
+            if (obj is string str)
             {
-                return this.Value == str;
+                return Value == str;
             }
 
             return false;
@@ -59,13 +60,15 @@ namespace UAssetAPI
 
         public static FString FromString(string value, Encoding encoding = null)
         {
-            if (value == NullCase) return null;
+            if (value == NullCase) 
+                return null;
             return new FString(value, encoding);
         }
 
         public FString(string value, Encoding encoding = null)
         {
-            if (encoding == null) encoding = Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode;
+            if (encoding == null) 
+                encoding = Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode;
 
             Value = value;
             Encoding = encoding;
@@ -96,8 +99,9 @@ namespace UAssetAPI
         /// </remarks>
         public override string ToString()
         {
-            if (Number == int.MinValue) return Value.ToString();
-            return Value.ToString() + "(" + Number + ")";
+            if (Number == int.MinValue) 
+                return Value.ToString();
+            return Value + "(" + Number + ")";
         }
 
         /// <summary>
@@ -111,14 +115,17 @@ namespace UAssetAPI
         /// </remarks>
         public static FName FromString(string val)
         {
-            if (val == null || val == "null") return null;
-            if (val.Length == 0 || val[val.Length - 1] != ')') return new FName(val);
+            if (val == null || val == "null") 
+                return null;
+            if (val.Length == 0 || val[val.Length - 1] != ')') 
+                return new FName(val);
 
             int locLastLeftBracket = val.LastIndexOf('(');
             if (locLastLeftBracket < 0) return new FName(val);
 
             string discriminatorRaw = val.Substring(locLastLeftBracket + 1, val.Length - locLastLeftBracket - 2);
-            if (!int.TryParse(discriminatorRaw, out int discriminator)) return new FName(val);
+            if (!int.TryParse(discriminatorRaw, out int discriminator)) 
+                return new FName(val);
 
             string realStr = val.Substring(0, locLastLeftBracket);
             return new FName(realStr, discriminator);
@@ -126,19 +133,22 @@ namespace UAssetAPI
 
         public override bool Equals(object obj)
         {
-            if (!(obj is FName name)) return false;
-            return (this.Value == name.Value || this.Value.Value == name.Value.Value) && this.Number == name.Number;
+            if (!(obj is FName name)) 
+                return false;
+            return (Value == name.Value || Value.Value == name.Value.Value) && Number == name.Number;
         }
 
         public static bool operator ==(FName one, FName two)
         {
-            if (one is null || two is null) return one is null && two is null;
+            if (one is null || two is null) 
+                return one is null && two is null;
             return one.Equals(two);
         }
 
         public static bool operator !=(FName one, FName two)
         {
-            if (one is null || two is null) return !(one is null && two is null);
+            if (one is null || two is null) 
+                return !(one is null && two is null);
             return !one.Equals(two);
         }
 

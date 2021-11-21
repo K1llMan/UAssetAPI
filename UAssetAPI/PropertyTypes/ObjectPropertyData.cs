@@ -19,8 +19,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ObjectProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ObjectProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         /// <summary>
         /// Returns true if this ObjectProperty represents an import.

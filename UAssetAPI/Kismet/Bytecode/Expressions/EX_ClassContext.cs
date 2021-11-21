@@ -8,7 +8,7 @@
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_ClassContext; } }
+        public override EExprToken Token => EExprToken.EX_ClassContext;
 
         public EX_ClassContext()
         {

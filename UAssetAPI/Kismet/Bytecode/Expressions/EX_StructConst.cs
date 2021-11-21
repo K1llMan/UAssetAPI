@@ -12,7 +12,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_StructConst; } }
+        public override EExprToken Token => EExprToken.EX_StructConst;
 
         /// <summary>
         /// Pointer to the UScriptStruct in question.

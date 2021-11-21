@@ -65,7 +65,7 @@ namespace UAssetAPI
         public void Dispose() { _impl.Dispose(); }
         public DictionaryEnumerator(IDictionary<TKey, TValue> value)
         {
-            this._impl = value.GetEnumerator();
+            _impl = value.GetEnumerator();
         }
         public void Reset() { _impl.Reset(); }
         public bool MoveNext() { return _impl.MoveNext(); }
@@ -77,9 +77,9 @@ namespace UAssetAPI
                 return new DictionaryEntry(pair.Key, pair.Value);
             }
         }
-        public object Key { get { return _impl.Current.Key; } }
-        public object Value { get { return _impl.Current.Value; } }
-        public object Current { get { return Entry; } }
+        public object Key => _impl.Current.Key;
+        public object Value => _impl.Current.Value;
+        public object Current => Entry;
     }
 
     public class Comparer2<T> : Comparer<T>
@@ -132,13 +132,13 @@ namespace UAssetAPI
 
         public void SortByKeys(IComparer<TKey> keyComparer)
         {
-            Comparer2<TItem> comparer = new Comparer2<TItem>((x, y) => keyComparer.Compare(GetKeyForItem(x), GetKeyForItem(y)));
+            Comparer2<TItem> comparer = new((x, y) => keyComparer.Compare(GetKeyForItem(x), GetKeyForItem(y)));
             Sort(comparer);
         }
 
         public void SortByKeys(Comparison<TKey> keyComparison)
         {
-            Comparer2<TItem> comparer = new Comparer2<TItem>((x, y) => keyComparison(GetKeyForItem(x), GetKeyForItem(y)));
+            Comparer2<TItem> comparer = new((x, y) => keyComparison(GetKeyForItem(x), GetKeyForItem(y)));
             Sort(comparer);
         }
 
@@ -150,13 +150,13 @@ namespace UAssetAPI
 
         public void Sort(Comparison<TItem> comparison)
         {
-            Comparer2<TItem> newComparer = new Comparer2<TItem>((x, y) => comparison(x, y));
+            Comparer2<TItem> newComparer = new((x, y) => comparison(x, y));
             Sort(newComparer);
         }
 
         public void Sort(IComparer<TItem> comparer)
         {
-            List<TItem> list = base.Items as List<TItem>;
+            List<TItem> list = Items as List<TItem>;
             if (list != null)
             {
                 list.Sort(comparer);
@@ -205,14 +205,8 @@ namespace UAssetAPI
         /// <param name="key">The key associated with the value to get or set.</param>
         public TValue this[TKey key]
         {
-            get
-            {
-                return GetValue(key);
-            }
-            set
-            {
-                SetValue(key, value);
-            }
+            get => GetValue(key);
+            set => SetValue(key, value);
         }
 
         /// <summary>
@@ -221,23 +215,14 @@ namespace UAssetAPI
         /// <param name="index">The index of the value to get or set.</param>
         public TValue this[int index]
         {
-            get
-            {
-                return GetItem(index).Value;
-            }
-            set
-            {
-                SetItem(index, value);
-            }
+            get => GetItem(index).Value;
+            set => SetItem(index, value);
         }
 
         /// <summary>
         /// Gets the number of items in the dictionary
         /// </summary>
-        public int Count
-        {
-            get { return _keyedCollection.Count; }
-        }
+        public int Count => _keyedCollection.Count;
 
         /// <summary>
         /// Gets all the keys in the ordered dictionary in their proper order.
@@ -326,7 +311,7 @@ namespace UAssetAPI
 
         private void Initialize(IEqualityComparer<TKey> comparer = null)
         {
-            this.Comparer = comparer;
+            Comparer = comparer;
             if (comparer != null)
             {
                 _keyedCollection = new KeyedCollection2<TKey, KeyValuePair<TKey, TValue>>(x => x.Key, comparer);
@@ -377,10 +362,8 @@ namespace UAssetAPI
             {
                 return _keyedCollection.IndexOf(_keyedCollection[key]);
             }
-            else
-            {
-                return -1;
-            }
+
+            return -1;
         }
 
         /// <summary>
@@ -390,7 +373,7 @@ namespace UAssetAPI
         /// <returns>True if the value is found.  False otherwise.</returns>
         public bool ContainsValue(TValue value)
         {
-            return this.Values.Contains(value);
+            return Values.Contains(value);
         }
 
         /// <summary>
@@ -401,7 +384,7 @@ namespace UAssetAPI
         /// <returns>True if the value is found.  False otherwise.</returns>
         public bool ContainsValue(TValue value, IEqualityComparer<TValue> comparer)
         {
-            return this.Values.Contains(value, comparer);
+            return Values.Contains(value, comparer);
         }
 
         /// <summary>
@@ -444,7 +427,7 @@ namespace UAssetAPI
             {
                 throw new ArgumentException("The index is outside the bounds of the dictionary: {0}".FormatWith(index));
             }
-            KeyValuePair<TKey, TValue> kvp = new KeyValuePair<TKey, TValue>(_keyedCollection[index].Key, value);
+            KeyValuePair<TKey, TValue> kvp = new(_keyedCollection[index].Key, value);
             _keyedCollection[index] = kvp;
         }
 
@@ -500,7 +483,7 @@ namespace UAssetAPI
         /// <param name="value">The the value to set.</param>
         public void SetValue(TKey key, TValue value)
         {
-            KeyValuePair<TKey, TValue> kvp = new KeyValuePair<TKey, TValue>(key, value);
+            KeyValuePair<TKey, TValue> kvp = new(key, value);
             int idx = IndexOf(key);
             if (idx > -1)
             {
@@ -530,11 +513,9 @@ namespace UAssetAPI
                 value = _keyedCollection[key].Value;
                 return true;
             }
-            else
-            {
-                value = default(TValue);
-                return false;
-            }
+
+            value = default(TValue);
+            return false;
         }
 
         #endregion
@@ -584,10 +565,7 @@ namespace UAssetAPI
             return ContainsKey(key);
         }
 
-        ICollection<TKey> IDictionary<TKey, TValue>.Keys
-        {
-            get { return Keys; }
-        }
+        ICollection<TKey> IDictionary<TKey, TValue>.Keys => Keys;
 
         bool IDictionary<TKey, TValue>.Remove(TKey key)
         {
@@ -599,21 +577,12 @@ namespace UAssetAPI
             return TryGetValue(key, out value);
         }
 
-        ICollection<TValue> IDictionary<TKey, TValue>.Values
-        {
-            get { return Values; }
-        }
+        ICollection<TValue> IDictionary<TKey, TValue>.Values => Values;
 
         TValue IDictionary<TKey, TValue>.this[TKey key]
         {
-            get
-            {
-                return this[key];
-            }
-            set
-            {
-                this[key] = value;
-            }
+            get => this[key];
+            set => this[key] = value;
         }
 
         #endregion
@@ -640,15 +609,9 @@ namespace UAssetAPI
             _keyedCollection.CopyTo(array, arrayIndex);
         }
 
-        int ICollection<KeyValuePair<TKey, TValue>>.Count
-        {
-            get { return _keyedCollection.Count; }
-        }
+        int ICollection<KeyValuePair<TKey, TValue>>.Count => _keyedCollection.Count;
 
-        bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
-        {
-            get { return false; }
-        }
+        bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
@@ -694,14 +657,8 @@ namespace UAssetAPI
 
         object IOrderedDictionary.this[int index]
         {
-            get
-            {
-                return this[index];
-            }
-            set
-            {
-                this[index] = (TValue)value;
-            }
+            get => this[index];
+            set => this[index] = (TValue)value;
         }
 
         #endregion
@@ -728,41 +685,23 @@ namespace UAssetAPI
             return new DictionaryEnumerator<TKey, TValue>(this);
         }
 
-        bool IDictionary.IsFixedSize
-        {
-            get { return false; }
-        }
+        bool IDictionary.IsFixedSize => false;
 
-        bool IDictionary.IsReadOnly
-        {
-            get { return false; }
-        }
+        bool IDictionary.IsReadOnly => false;
 
-        ICollection IDictionary.Keys
-        {
-            get { return (ICollection)this.Keys; }
-        }
+        ICollection IDictionary.Keys => (ICollection)Keys;
 
         void IDictionary.Remove(object key)
         {
             Remove((TKey)key);
         }
 
-        ICollection IDictionary.Values
-        {
-            get { return (ICollection)this.Values; }
-        }
+        ICollection IDictionary.Values => (ICollection)Values;
 
         object IDictionary.this[object key]
         {
-            get
-            {
-                return this[(TKey)key];
-            }
-            set
-            {
-                this[(TKey)key] = (TValue)value;
-            }
+            get => this[(TKey)key];
+            set => this[(TKey)key] = (TValue)value;
         }
 
         #endregion
@@ -774,20 +713,11 @@ namespace UAssetAPI
             ((ICollection)_keyedCollection).CopyTo(array, index);
         }
 
-        int ICollection.Count
-        {
-            get { return ((ICollection)_keyedCollection).Count; }
-        }
+        int ICollection.Count => ((ICollection)_keyedCollection).Count;
 
-        bool ICollection.IsSynchronized
-        {
-            get { return ((ICollection)_keyedCollection).IsSynchronized; }
-        }
+        bool ICollection.IsSynchronized => ((ICollection)_keyedCollection).IsSynchronized;
 
-        object ICollection.SyncRoot
-        {
-            get { return ((ICollection)_keyedCollection).SyncRoot; }
-        }
+        object ICollection.SyncRoot => ((ICollection)_keyedCollection).SyncRoot;
 
         #endregion
     }

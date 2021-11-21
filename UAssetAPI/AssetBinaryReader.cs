@@ -68,7 +68,7 @@ namespace UAssetAPI
 
         public virtual FString ReadFString()
         {
-            int length = this.ReadInt32();
+            int length = ReadInt32();
             switch (length)
             {
                 case 0:
@@ -76,12 +76,12 @@ namespace UAssetAPI
                 default:
                     if (length < 0)
                     {
-                        byte[] data = this.ReadBytes(-length * 2);
+                        byte[] data = ReadBytes(-length * 2);
                         return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
                     }
                     else
                     {
-                        byte[] data = this.ReadBytes(length);
+                        byte[] data = ReadBytes(length);
                         return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
                     }
             }
@@ -89,10 +89,10 @@ namespace UAssetAPI
 
         public virtual FString ReadNameMapString(out uint hashes)
         {
-            FString str = this.ReadFString();
+            FString str = ReadFString();
             if (!string.IsNullOrEmpty(str.Value))
             {
-                hashes = this.ReadUInt32();
+                hashes = ReadUInt32();
             }
             else
             {
@@ -103,17 +103,17 @@ namespace UAssetAPI
 
         public virtual FName ReadFName()
         {
-            int nameMapPointer = this.ReadInt32();
-            int number = this.ReadInt32();
+            int nameMapPointer = ReadInt32();
+            int number = ReadInt32();
             return new FName(Asset.GetNameReference(nameMapPointer), number);
         }
 
         public string XFERSTRING()
         {
-            List<byte> readData = new List<byte>();
+            List<byte> readData = new();
             while (true)
             {
-                byte newVal = this.ReadByte();
+                byte newVal = ReadByte();
                 if (newVal == 0) break;
                 readData.Add(newVal);
             }
@@ -122,11 +122,11 @@ namespace UAssetAPI
 
         public string XFERUNICODESTRING()
         {
-            List<byte> readData = new List<byte>();
+            List<byte> readData = new();
             while (true)
             {
-                byte newVal1 = this.ReadByte();
-                byte newVal2 = this.ReadByte();
+                byte newVal1 = ReadByte();
+                byte newVal2 = ReadByte();
                 if (newVal1 == 0 && newVal2 == 0) break;
                 readData.Add(newVal1);
                 readData.Add(newVal2);
@@ -141,51 +141,49 @@ namespace UAssetAPI
 
         public FName XFERNAME()
         {
-            return this.ReadFName();
+            return ReadFName();
         }
 
         public FName XFER_FUNC_NAME()
         {
-            return this.XFERNAME();
+            return XFERNAME();
         }
 
         public FPackageIndex XFERPTR()
         {
-            return new FPackageIndex(this.ReadInt32());
+            return new(ReadInt32());
         }
 
         public FPackageIndex XFER_FUNC_POINTER()
         {
-            return this.XFERPTR();
+            return XFERPTR();
         }
 
         public KismetPropertyPointer XFER_PROP_POINTER()
         {
             if (Asset.EngineVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
             {
-                int numEntries = this.ReadInt32();
+                int numEntries = ReadInt32();
                 FName[] allNames = new FName[numEntries];
                 for (int i = 0; i < numEntries; i++)
                 {
-                    allNames[i] = this.ReadFName();
+                    allNames[i] = ReadFName();
                 }
-                FPackageIndex owner = this.XFER_OBJECT_POINTER();
+                FPackageIndex owner = XFER_OBJECT_POINTER();
                 return new KismetPropertyPointer(new FFieldPath(allNames, owner));
             }
-            else
-            {
-                return new KismetPropertyPointer(this.XFERPTR());
-            }
+
+            return new KismetPropertyPointer(XFERPTR());
         }
 
         public FPackageIndex XFER_OBJECT_POINTER()
         {
-            return this.XFERPTR();
+            return XFERPTR();
         }
 
         public KismetExpression[] ReadExpressionArray(EExprToken endToken)
         {
-            List<KismetExpression> newData = new List<KismetExpression>();
+            List<KismetExpression> newData = new();
             KismetExpression currExpression = null;
             while (currExpression == null || currExpression.Token != endToken)
             {

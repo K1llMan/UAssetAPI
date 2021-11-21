@@ -46,14 +46,8 @@ namespace UAssetAPI
         /// <param name="key">The key associated with the value to get or set.</param>
         public PropertyData this[string key]
         {
-            get
-            {
-                return this[FName.FromString(key)];
-            }
-            set
-            {
-                this[FName.FromString(key)] = value;
-            }
+            get => this[FName.FromString(key)];
+            set => this[FName.FromString(key)] = value;
         }
 
 
@@ -63,14 +57,8 @@ namespace UAssetAPI
         /// <param name="index">The index of the value to get or set.</param>
         public PropertyData this[int index]
         {
-            get
-            {
-                return Data[index];
-            }
-            set
-            {
-                Data[index] = value;
-            }
+            get => Data[index];
+            set => Data[index] = value;
         }
 
         public NormalExport(Export super)

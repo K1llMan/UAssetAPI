@@ -8,7 +8,7 @@
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_TransformConst; } }
+        public override EExprToken Token => EExprToken.EX_TransformConst;
 
         public EX_TransformConst()
         {
@@ -21,9 +21,9 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            FQuat rotation = new FQuat(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            FVector translation = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            FVector scale = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            FQuat rotation = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            FVector translation = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            FVector scale = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             Value = new FTransform(rotation, translation, scale);
         }
 

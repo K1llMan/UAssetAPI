@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
 using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.StructTypes;
@@ -62,12 +63,11 @@ namespace UAssetAPI
             Assembly[] allAssemblies = new Assembly[1];
             allAssemblies[0] = registryParentDataType.Assembly;
 
-            for (int i = 0; i < allAssemblies.Length; i++)
+            foreach (Assembly assembly in allAssemblies)
             {
-                Type[] allPropertyDataTypes = allAssemblies[i].GetTypes().Where(t => t.IsSubclassOf(registryParentDataType)).ToArray();
-                for (int j = 0; j < allPropertyDataTypes.Length; j++)
+                Type[] allPropertyDataTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(registryParentDataType)).ToArray();
+                foreach (Type currentPropertyDataType in allPropertyDataTypes)
                 {
-                    Type currentPropertyDataType = allPropertyDataTypes[j];
                     if (currentPropertyDataType == null || currentPropertyDataType.ContainsGenericParameters) 
                         continue;
 
@@ -80,7 +80,7 @@ namespace UAssetAPI
                     if (returnedHasCustomStructSerialization == null) 
                         continue;
 
-                    RegistryEntry res = new RegistryEntry
+                    RegistryEntry res = new()
                     {
                         PropertyType = currentPropertyDataType,
                         HasCustomStructSerialization = (bool) returnedHasCustomStructSerialization
@@ -91,16 +91,12 @@ namespace UAssetAPI
 
             // Fetch the current git commit while we're here
             UAPUtils.CurrentCommit = string.Empty;
-            using (Stream stream = registryParentDataType.Assembly.GetManifestResourceStream("UAssetAPI.git_commit.txt"))
-            {
-                if (stream != null)
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        if (reader != null) UAPUtils.CurrentCommit = reader.ReadToEnd().Trim();
-                    }
-                }
-            }
+            using Stream stream = registryParentDataType.Assembly.GetManifestResourceStream("UAssetAPI.git_commit.txt");
+            if (stream == null) 
+                return;
+
+            using StreamReader reader = new(stream);
+            UAPUtils.CurrentCommit = reader.ReadToEnd().Trim();
         }
 
         /// <summary>
@@ -193,7 +189,7 @@ namespace UAssetAPI
             return result;
         }
 
-        private static readonly Regex allNonLetters = new Regex("[^a-zA-Z]", RegexOptions.Compiled);
+        private static readonly Regex allNonLetters = new("[^a-zA-Z]", RegexOptions.Compiled);
 
         /// <summary>
         /// Reads an FProperty into memory. Primarily used as a part of <see cref="StructExport"/> serialization.

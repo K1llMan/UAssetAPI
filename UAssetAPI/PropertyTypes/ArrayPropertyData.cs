@@ -30,8 +30,8 @@ namespace UAssetAPI.PropertyTypes
             Value = new PropertyData[0];
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ArrayProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("ArrayProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -57,7 +57,7 @@ namespace UAssetAPI.PropertyTypes
                 long structLength = reader.ReadInt64(); // length value
 
                 FName fullType = reader.ReadFName();
-                Guid structGUID = new Guid(reader.ReadBytes(16));
+                Guid structGUID = new(reader.ReadBytes(16));
                 reader.ReadByte();
 
                 if (numEntries == 0)
@@ -71,7 +71,7 @@ namespace UAssetAPI.PropertyTypes
                 {
                     for (int i = 0; i < numEntries; i++)
                     {
-                        StructPropertyData data = new StructPropertyData(name, fullType)
+                        StructPropertyData data = new(name, fullType)
                         {
                             Offset = reader.BaseStream.Position
                         };
@@ -174,8 +174,8 @@ namespace UAssetAPI.PropertyTypes
         protected override void HandleCloned(PropertyData res)
         {
             ArrayPropertyData cloningProperty = (ArrayPropertyData)res;
-            cloningProperty.ArrayType = (FName)this.ArrayType?.Clone();
-            cloningProperty.DummyStruct = (StructPropertyData)this.DummyStruct?.Clone();
+            cloningProperty.ArrayType = (FName)ArrayType?.Clone();
+            cloningProperty.DummyStruct = (StructPropertyData)DummyStruct?.Clone();
         }
     }
 }

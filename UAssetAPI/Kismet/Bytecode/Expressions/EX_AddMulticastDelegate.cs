@@ -10,7 +10,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_AddMulticastDelegate; } }
+        public override EExprToken Token => EExprToken.EX_AddMulticastDelegate;
 
         /// <summary>
         /// Delegate property to assign to.

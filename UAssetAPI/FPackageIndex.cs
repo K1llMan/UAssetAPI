@@ -31,7 +31,7 @@ namespace UAssetAPI
         /// <returns>A new FPackageIndex with the index provided.</returns>
         public static FPackageIndex FromRawIndex(int index)
         {
-            return new FPackageIndex(index);
+            return new(index);
         }
 
         /// <summary>
@@ -69,7 +69,8 @@ namespace UAssetAPI
         /// <exception cref="System.InvalidOperationException">Thrown when the provided import index is less than zero.</exception>
         public static FPackageIndex FromImport(int importIndex)
         {
-            if (importIndex < 0) throw new InvalidOperationException("importIndex must be greater than or equal to zero");
+            if (importIndex < 0) 
+                throw new InvalidOperationException("importIndex must be greater than or equal to zero");
             return new FPackageIndex(-importIndex - 1);
         }
 
@@ -81,7 +82,8 @@ namespace UAssetAPI
         /// <exception cref="System.InvalidOperationException">Thrown when the provided export index is less than zero.</exception>
         public static FPackageIndex FromExport(int exportIndex)
         {
-            if (exportIndex < 0) throw new InvalidOperationException("exportIndex must be greater than or equal to zero");
+            if (exportIndex < 0) 
+                throw new InvalidOperationException("exportIndex must be greater than or equal to zero");
             return new FPackageIndex(exportIndex + 1);
         }
 
@@ -93,9 +95,11 @@ namespace UAssetAPI
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the import map.</exception>
         public Import ToImport(UAsset asset)
         {
-            if (!IsImport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
+            if (!IsImport()) 
+                throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
             int newIndex = -Index - 1;
-            if (newIndex < 0 || newIndex >= asset.Imports.Count) return null;
+            if (newIndex < 0 || newIndex >= asset.Imports.Count) 
+                return null;
             return asset.Imports[newIndex];
         }
 
@@ -107,16 +111,19 @@ namespace UAssetAPI
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the export map.</exception>
         public Export ToExport(UAsset asset)
         {
-            if (!IsExport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
+            if (!IsExport()) 
+                throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
             int newIndex = Index - 1;
-            if (newIndex < 0 || newIndex >= asset.Exports.Count) return null;
+            if (newIndex < 0 || newIndex >= asset.Exports.Count) 
+                return null;
             return asset.Exports[newIndex];
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is FPackageIndex comparingPackageIndex)) return false;
-            return comparingPackageIndex.Index == this.Index;
+            if (!(obj is FPackageIndex comparingPackageIndex)) 
+                return false;
+            return comparingPackageIndex.Index == Index;
         }
 
         public static bool operator <(FPackageIndex first, FPackageIndex second)
@@ -146,7 +153,7 @@ namespace UAssetAPI
 
         public override string ToString()
         {
-            return Index.ToString();
+            return  Index.ToString();
         }
 
         public FPackageIndex(int index = 0)

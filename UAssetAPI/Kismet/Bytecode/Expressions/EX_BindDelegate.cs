@@ -10,7 +10,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// The token of this expression.
         /// </summary>
-        public override EExprToken Token { get { return EExprToken.EX_BindDelegate; } }
+        public override EExprToken Token => EExprToken.EX_BindDelegate;
 
         /// <summary>
         /// The name of the function assigned to the delegate.

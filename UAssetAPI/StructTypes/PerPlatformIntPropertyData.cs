@@ -20,9 +20,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("PerPlatformInt");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("PerPlatformInt");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -56,7 +56,7 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            List<int> valueList = new List<int>();
+            List<int> valueList = new();
             if (int.TryParse(d[0], out int res1)) valueList.Add(res1);
             if (int.TryParse(d[1], out int res2)) valueList.Add(res2);
             if (int.TryParse(d[2], out int res3)) valueList.Add(res3);

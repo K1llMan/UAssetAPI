@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
@@ -9,7 +11,7 @@ namespace UAssetAPI.StructTypes
     public class StructPropertyData : PropertyData<List<PropertyData>> // List
     {
         [JsonProperty]
-        public FName StructType = null;
+        public FName StructType;
         [JsonProperty]
         public bool SerializeNone = true;
         [JsonProperty]
@@ -31,8 +33,8 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("StructProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("StructProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         private void ReadOnce(AssetBinaryReader reader, Type T, long offset)
         {
@@ -46,7 +48,7 @@ namespace UAssetAPI.StructTypes
 
         private void ReadNTPL(AssetBinaryReader reader)
         {
-            List<PropertyData> resultingList = new List<PropertyData>();
+            List<PropertyData> resultingList = new();
             PropertyData data = null;
             while ((data = MainSerializer.Read(reader, true)) != null)
             {
@@ -137,13 +139,13 @@ namespace UAssetAPI.StructTypes
         protected override void HandleCloned(PropertyData res)
         {
             StructPropertyData cloningProperty = (StructPropertyData)res;
-            cloningProperty.StructType = (FName)this.StructType.Clone();
-            cloningProperty.StructGUID = new Guid(this.StructGUID.ToByteArray());
+            cloningProperty.StructType = (FName)StructType.Clone();
+            cloningProperty.StructGUID = new Guid(StructGUID.ToByteArray());
 
-            List<PropertyData> newData = new List<PropertyData>(this.Value.Count);
-            for (int i = 0; i < this.Value.Count; i++)
+            List<PropertyData> newData = new(Value.Count);
+            for (int i = 0; i < Value.Count; i++)
             {
-                newData.Add((PropertyData)this.Value[i].Clone());
+                newData.Add((PropertyData)Value[i].Clone());
             }
             cloningProperty.Value = newData;
         }

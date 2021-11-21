@@ -36,9 +36,9 @@ namespace UAssetAPI.StructTypes
             return Value.Write(writer, false);
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SkeletalMeshSamplingLODBuiltData");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("SkeletalMeshSamplingLODBuiltData");
+        public override bool HasCustomStructSerialization => true;
+        public override FName PropertyType => CurrentPropertyType;
 
         public override string ToString()
         {

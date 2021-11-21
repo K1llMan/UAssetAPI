@@ -29,13 +29,13 @@ namespace UAssetAPI.PropertyTypes
         public TextHistoryType HistoryType = TextHistoryType.Base;
         /// <summary>The string table ID being referenced, if applicable</summary>
         [JsonProperty]
-        public FName TableId = null;
+        public FName TableId;
         /// <summary>A namespace to use when parsing texts that use LOCTEXT</summary>
         [JsonProperty]
-        public FString Namespace = null;
+        public FString Namespace;
         /// <summary>The source string for this FText. In the Unreal Engine, this is also known as SourceString.</summary>
         [JsonProperty]
-        public FString CultureInvariantString = null;
+        public FString CultureInvariantString;
 
         public bool ShouldSerializeTableId()
         {
@@ -52,8 +52,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("TextProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FName CurrentPropertyType = new("TextProperty");
+        public override FName PropertyType => CurrentPropertyType;
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -106,7 +106,7 @@ namespace UAssetAPI.PropertyTypes
                         Value = reader.ReadFString();
                         break;
                     default:
-                        throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString());
+                        throw new NotImplementedException("Unimplemented reader for " + HistoryType);
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace UAssetAPI.PropertyTypes
                         writer.Write(Value);
                         break;
                     default:
-                        throw new NotImplementedException("Unimplemented writer for " + HistoryType.ToString());
+                        throw new NotImplementedException("Unimplemented writer for " + HistoryType);
                 }
             }
 
@@ -186,7 +186,7 @@ namespace UAssetAPI.PropertyTypes
                 case TextHistoryType.StringTableEntry:
                     return "StringTableEntry, " + TableId + ", " + Value;
                 default:
-                    throw new NotImplementedException("Unimplemented display for " + HistoryType.ToString());
+                    throw new NotImplementedException("Unimplemented display for " + HistoryType);
             }
         }
 
