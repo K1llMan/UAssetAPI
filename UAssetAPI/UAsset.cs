@@ -440,7 +440,8 @@ namespace UAssetAPI
             foreach (Import import in Imports)
             {
                 currentPos--;
-                if (objectName == import.ObjectName) return currentPos;
+                if (objectName == import.ObjectName) 
+                    return currentPos;
             }
 
             return 0;
@@ -873,7 +874,8 @@ namespace UAssetAPI
             for (int i = 0; i < NameCount; i++)
             {
                 FString nameInMap = reader.ReadNameMapString(out uint hashes);
-                if (hashes == 0) OverrideNameMapHashes[nameInMap] = 0;
+                if (hashes == 0) 
+                    OverrideNameMapHashes[nameInMap] = 0;
                 AddNameReference(nameInMap, true);
             }
 
@@ -1557,7 +1559,8 @@ namespace UAssetAPI
         /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="EngineVersion"/> is unspecified.</exception>
         public void Write(string outputPath)
         {
-            if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an engine version is specified");
+            if (EngineVersion == UE4Version.UNKNOWN) 
+                throw new UnknownEngineVersionException("Cannot begin serialization before an engine version is specified");
 
             MemoryStream newData = WriteData();
 

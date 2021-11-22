@@ -116,7 +116,8 @@ namespace UAssetAPI.PropertyTypes
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
-            if (Value.Length > 0) ArrayType = Value[0].PropertyType;
+            if (Value.Length > 0) 
+                ArrayType = Value[0].PropertyType;
 
             if (includeHeader)
             {
@@ -128,8 +129,10 @@ namespace UAssetAPI.PropertyTypes
             writer.Write(Value.Length);
             if (ArrayType.Value.Value == "StructProperty")
             {
-                if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
-                if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
+                if (Value.Length == 0 && DummyStruct == null) 
+                    throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
+                if (Value.Length > 0) 
+                    DummyStruct = (StructPropertyData)Value[0];
 
                 FName fullType = DummyStruct.StructType;
 

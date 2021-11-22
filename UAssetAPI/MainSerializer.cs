@@ -227,7 +227,8 @@ namespace UAssetAPI
         /// <returns>The serial offset where the length of the property is stored.</returns>
         public static int Write(PropertyData property, AssetBinaryWriter writer, bool includeHeader)
         {
-            if (property == null) return 0;
+            if (property == null) 
+                return 0;
 
             property.Offset = writer.BaseStream.Position;
             writer.Write(property.Name);
@@ -239,6 +240,7 @@ namespace UAssetAPI
             {
                 writer.Write(property.PropertyType);
             }
+
             int oldLoc = (int)writer.BaseStream.Position;
             writer.Write((int)0); // initial length
             writer.Write(property.DuplicationIndex);
