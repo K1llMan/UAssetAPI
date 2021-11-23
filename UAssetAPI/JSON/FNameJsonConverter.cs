@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
-namespace UAssetAPI
+using Newtonsoft.Json;
+
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.JSON
 {
     public class FNameJsonConverter : JsonConverter
     {

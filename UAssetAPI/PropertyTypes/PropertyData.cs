@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.IO;
+
+using UAssetAPI.DataAccess;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes
 {

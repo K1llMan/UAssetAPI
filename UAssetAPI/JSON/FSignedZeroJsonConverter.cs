@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
+﻿using System;
 
-namespace UAssetAPI
+using Newtonsoft.Json;
+
+namespace UAssetAPI.JSON
 {
     public class FSignedZeroJsonConverter : JsonConverter
     {

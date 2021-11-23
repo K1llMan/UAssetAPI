@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 /*
     The code in this file is modified from mattmc3's dotmore @ https://github.com/mattmc3/dotmore/tree/b032bbf871d46bffd698c9b7a233c533d9d2f0ebs for usage in UAssetAPI.
@@ -30,7 +31,7 @@ using System.Collections.Specialized;
     SOFTWARE.
 */
 
-namespace UAssetAPI
+namespace UAssetAPI.JSON
 {
     public class TMapJsonConverter<TKey, TValue> : JsonConverter
     {

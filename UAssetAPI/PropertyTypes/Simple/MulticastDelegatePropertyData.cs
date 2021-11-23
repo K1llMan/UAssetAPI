@@ -1,0 +1,112 @@
+﻿using System;
+
+using Newtonsoft.Json;
+
+using UAssetAPI.DataAccess;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.PropertyTypes.Simple
+{
+    /// <summary>
+    /// Describes a function bound to an Object.
+    /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
+    public class FMulticastDelegate
+    {
+        /** Uncertain what this is for; if you find out, please let me know */
+        [JsonProperty]
+        public int Number;
+        /** Uncertain what this is for; if you find out, please let me know */
+        [JsonProperty]
+        public FName Delegate;
+
+        public FMulticastDelegate(int number, FName @delegate)
+        {
+            Number = number;
+            Delegate = @delegate;
+        }
+
+        public FMulticastDelegate()
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// Describes a list of functions bound to an Object.
+    /// </summary>
+    public class MulticastDelegatePropertyData : PropertyData<FMulticastDelegate[]>
+    {
+        public MulticastDelegatePropertyData(FName name) : base(name)
+        {
+
+        }
+
+        public MulticastDelegatePropertyData()
+        {
+
+        }
+
+        private static readonly FName CurrentPropertyType = new("MulticastDelegateProperty");
+        public override FName PropertyType => CurrentPropertyType;
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        {
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
+            int numVals = reader.ReadInt32();
+            Value = new FMulticastDelegate[numVals];
+            for (int i = 0; i < numVals; i++)
+            {
+                Value[i] = new FMulticastDelegate(reader.ReadInt32(), reader.ReadFName());
+            }
+        }
+
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        {
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
+            writer.Write(Value.Length);
+            for (int i = 0; i < Value.Length; i++)
+            {
+                writer.Write(Value[i].Number);
+                writer.Write(Value[i].Delegate);
+            }
+            return sizeof(int) + sizeof(int) * 3 * Value.Length;
+        }
+
+        public override string ToString()
+        {
+            string oup = "(";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += "(" + Convert.ToString(Value[i].Number) + ", " + Value[i].Delegate.Value.Value + "), ";
+            }
+            return oup.Substring(0, oup.Length - 2) + ")";
+        }
+
+        public override void FromString(string[] d, UAsset asset)
+        {
+            
+        }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            MulticastDelegatePropertyData cloningProperty = (MulticastDelegatePropertyData)res;
+
+            FMulticastDelegate[] newData = new FMulticastDelegate[Value.Length];
+            for (int i = 0; i < Value.Length; i++)
+            {
+                newData[i] = new FMulticastDelegate(Value[i].Number, (FName)Value[i].Delegate.Clone());
+            }
+
+            cloningProperty.Value = newData;
+        }
+    }
+}

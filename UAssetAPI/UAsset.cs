@@ -5,8 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using UAssetAPI.FieldTypes;
+
+using UAssetAPI.DataAccess;
+using UAssetAPI.ExportTypes;
+using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.Enums;
 
 namespace UAssetAPI
 {

@@ -1,4 +1,7 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using UAssetAPI.DataAccess;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_TransformConst"/> instruction.

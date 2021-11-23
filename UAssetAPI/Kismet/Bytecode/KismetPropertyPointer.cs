@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.Enums;
+
 namespace UAssetAPI.Kismet.Bytecode
 {
     /// <summary>

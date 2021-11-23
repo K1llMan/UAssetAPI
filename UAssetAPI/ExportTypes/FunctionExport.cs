@@ -1,6 +1,6 @@
-using System.IO;
+using UAssetAPI.DataAccess;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// Export data for a blueprint function.

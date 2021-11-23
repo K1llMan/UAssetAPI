@@ -1,0 +1,68 @@
+﻿using System;
+
+using Newtonsoft.Json;
+
+using UAssetAPI.DataAccess;
+using UAssetAPI.JSON;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.PropertyTypes.Simple
+{
+    /// <summary>
+    /// Describes an IEEE 32-bit floating point variable (<see cref="float"/>).
+    /// </summary>
+    public class FloatPropertyData : PropertyData
+    {
+        /// <summary>
+        /// The float that this property represents.
+        /// </summary>
+        [JsonProperty]
+        [JsonConverter(typeof(FSignedZeroJsonConverter))]
+        public float Value;
+
+        public FloatPropertyData(FName name) : base(name)
+        {
+
+        }
+
+        public FloatPropertyData()
+        {
+
+        }
+
+        private static readonly FName CurrentPropertyType = new("FloatProperty");
+        public override FName PropertyType => CurrentPropertyType;
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        {
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
+            Value = reader.ReadSingle();
+        }
+
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        {
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
+            writer.Write(Value);
+            return sizeof(float);
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Value);
+        }
+
+        public override void FromString(string[] d, UAsset asset)
+        {
+            Value = 0;
+            if (float.TryParse(d[0], out float res)) Value = res;
+        }
+    }
+}

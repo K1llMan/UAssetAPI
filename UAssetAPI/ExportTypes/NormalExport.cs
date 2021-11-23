@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using UAssetAPI.PropertyTypes;
 
-namespace UAssetAPI
+using UAssetAPI.DataAccess;
+using UAssetAPI.PropertyTypes;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// A regular export, with no special serialization. Serialized as a None-terminated property list.

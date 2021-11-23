@@ -1,3 +1,7 @@
+using System.Linq;
+
+using UAssetAPI.ExportTypes;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,11 +23,7 @@ namespace UAssetAPI.Tests
         /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
         public bool CheckAllExportsParsedCorrectly(UAsset tester)
         {
-            foreach (Export testExport in tester.Exports)
-            {
-                if (testExport is RawExport) return false;
-            }
-            return true;
+            return !tester.Exports.Any(t => t is RawExport);
         }
 
         #endregion Common functions

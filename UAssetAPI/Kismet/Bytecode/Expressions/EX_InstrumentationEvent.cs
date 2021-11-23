@@ -1,5 +1,7 @@
 ﻿using System;
 
+using UAssetAPI.DataAccess;
+
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>

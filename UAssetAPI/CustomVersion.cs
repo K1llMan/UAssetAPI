@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using UAssetAPI.UnrealTypes.Enums;
+
 namespace UAssetAPI
 {
     /// <summary>

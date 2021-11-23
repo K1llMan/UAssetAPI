@@ -1,0 +1,80 @@
+﻿using UAssetAPI.DataAccess;
+using UAssetAPI.PropertyTypes.Struct;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.PropertyTypes.Simple
+{
+    /// <summary>
+    /// Describes a set.
+    /// </summary>
+    public class SetPropertyData : ArrayPropertyData
+    {
+        public PropertyData[] RemovedItems;
+        public StructPropertyData RemovedItemsDummyStruct;
+
+        public SetPropertyData(FName name) : base(name)
+        {
+            Value = new PropertyData[0];
+            RemovedItems = new PropertyData[0];
+        }
+
+        public SetPropertyData()
+        {
+            Value = new PropertyData[0];
+            RemovedItems = new PropertyData[0];
+        }
+
+        private static readonly FName CurrentPropertyType = new("SetProperty");
+        public override FName PropertyType => CurrentPropertyType;
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        {
+            if (includeHeader)
+            {
+                ArrayType = reader.ReadFName();
+                reader.ReadByte(); // null byte
+            }
+
+            ArrayPropertyData removedItemsDummy = new(new FName("RemovedItems"));
+            removedItemsDummy.ArrayType = ArrayType;
+            removedItemsDummy.Read(reader, false, leng1, leng2);
+            RemovedItems = removedItemsDummy.Value;
+            RemovedItemsDummyStruct = removedItemsDummy.DummyStruct;
+            base.Read(reader, false, leng1, leng2);
+        }
+
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        {
+            if (Value.Length > 0) ArrayType = Value[0].PropertyType;
+
+            if (includeHeader)
+            {
+                writer.Write(ArrayType);
+                writer.Write((byte)0);
+            }
+
+            ArrayPropertyData removedItemsDummy = new(new FName("RemovedItems"));
+            removedItemsDummy.ArrayType = ArrayType;
+            removedItemsDummy.DummyStruct = RemovedItemsDummyStruct;
+            removedItemsDummy.Value = RemovedItems;
+
+            int leng1 = removedItemsDummy.Write(writer, false);
+            return leng1 + base.Write(writer, false);
+        }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            base.HandleCloned(res);
+            SetPropertyData cloningProperty = (SetPropertyData)res;
+
+            PropertyData[] newData = new PropertyData[RemovedItems.Length];
+            for (int i = 0; i < Value.Length; i++)
+            {
+                newData[i] = (PropertyData)Value[i].Clone();
+            }
+            cloningProperty.RemovedItems = newData;
+
+            cloningProperty.RemovedItemsDummyStruct = (StructPropertyData)RemovedItemsDummyStruct.Clone();
+        }
+    }
+}

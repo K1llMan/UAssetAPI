@@ -6,9 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-using UAssetAPI.FieldTypes;
+using UAssetAPI.DataAccess;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes;
-using UAssetAPI.StructTypes;
+using UAssetAPI.PropertyTypes.Struct;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {
@@ -200,7 +202,8 @@ namespace UAssetAPI
         {
             FName serializedType = reader.ReadFName();
             Type requestedType = Type.GetType("UAssetAPI.FieldTypes.F" + allNonLetters.Replace(serializedType.Value.Value, string.Empty));
-            if (requestedType == null) requestedType = typeof(FGenericProperty);
+            if (requestedType == null) 
+                requestedType = typeof(FGenericProperty);
             FProperty res = (FProperty)Activator.CreateInstance(requestedType);
             res.SerializedType = serializedType;
             res.Read(reader);

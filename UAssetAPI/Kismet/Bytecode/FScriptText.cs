@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 
+using UAssetAPI.DataAccess;
+using UAssetAPI.UnrealTypes;
+
 namespace UAssetAPI.Kismet.Bytecode
 {
     /// <summary>

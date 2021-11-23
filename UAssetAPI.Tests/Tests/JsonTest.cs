@@ -4,6 +4,7 @@ using System.Linq;
 using FluentAssertions;
 
 using UAssetAPI.Extensions;
+using UAssetAPI.UnrealTypes.Enums;
 
 using Xunit;
 using Xunit.Abstractions;

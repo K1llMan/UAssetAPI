@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq.Expressions;
-using UAssetAPI.FieldTypes;
-using UAssetAPI.Kismet.Bytecode;
 
-namespace UAssetAPI
+using UAssetAPI.DataAccess;
+using UAssetAPI.Kismet.Bytecode;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// Base export for all UObject types that contain fields.

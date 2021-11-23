@@ -1,10 +1,12 @@
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using UAssetAPI.PropertyTypes;
-using UAssetAPI.StructTypes;
 
-namespace UAssetAPI
+using UAssetAPI.DataAccess;
+using UAssetAPI.PropertyTypes;
+using UAssetAPI.PropertyTypes.Simple;
+using UAssetAPI.PropertyTypes.Struct;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// Imported spreadsheet table.

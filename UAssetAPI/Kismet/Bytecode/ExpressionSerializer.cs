@@ -1,4 +1,6 @@
 ﻿using System;
+
+using UAssetAPI.DataAccess;
 using UAssetAPI.Kismet.Bytecode.Expressions;
 
 namespace UAssetAPI.Kismet.Bytecode

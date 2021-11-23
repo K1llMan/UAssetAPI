@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 
-namespace UAssetAPI
+using UAssetAPI.DataAccess;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.Enums;
+
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>How this enum is declared in C++. Affects the internal naming of enum values.</summary>
     public enum ECppForm

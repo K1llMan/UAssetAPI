@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.Extensions
 {

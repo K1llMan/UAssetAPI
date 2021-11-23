@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UAssetAPI.PropertyTypes;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

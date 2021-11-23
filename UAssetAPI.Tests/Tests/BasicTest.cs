@@ -4,8 +4,12 @@ using System.Linq;
 
 using FluentAssertions;
 
+using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes;
-using UAssetAPI.StructTypes;
+using UAssetAPI.PropertyTypes.Simple;
+using UAssetAPI.PropertyTypes.Struct;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.Enums;
 
 using Xunit;
 using Xunit.Abstractions;

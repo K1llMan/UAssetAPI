@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 
+using UAssetAPI.DataAccess;
+
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>

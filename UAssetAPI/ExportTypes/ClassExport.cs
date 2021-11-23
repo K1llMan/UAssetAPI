@@ -1,8 +1,14 @@
-using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 
-namespace UAssetAPI
+using Newtonsoft.Json;
+
+using UAssetAPI.DataAccess;
+using UAssetAPI.JSON;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.Enums;
+
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// An interface that a UClass (<see cref="ClassExport"/>) implements.

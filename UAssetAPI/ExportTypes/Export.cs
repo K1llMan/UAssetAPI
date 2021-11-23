@@ -1,11 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.IO;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace UAssetAPI
+using Newtonsoft.Json;
+
+using UAssetAPI.DataAccess;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.Enums;
+
+namespace UAssetAPI.ExportTypes
 {
     [AttributeUsage(AttributeTargets.Field)]
     internal class FObjectExportFieldAttribute : Attribute
