@@ -201,7 +201,7 @@ namespace UAssetAPI
         public static FProperty ReadFProperty(AssetBinaryReader reader)
         {
             FName serializedType = reader.ReadFName();
-            Type requestedType = Type.GetType("UAssetAPI.FieldTypes.F" + allNonLetters.Replace(serializedType.Value.Value, string.Empty));
+            Type requestedType = Type.GetType("UAssetAPI.UnrealTypes.F" + allNonLetters.Replace(serializedType.Value.Value, string.Empty));
             if (requestedType == null) 
                 requestedType = typeof(FGenericProperty);
             FProperty res = (FProperty)Activator.CreateInstance(requestedType);
