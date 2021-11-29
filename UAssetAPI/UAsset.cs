@@ -1048,32 +1048,10 @@ namespace UAssetAPI
                         if (Exports.Count - 1 > i) 
                             nextStarting = Exports[i + 1].SerialOffset;
 
-                        switch (Exports[i].ClassIndex.IsImport() ? Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value : Exports[i].ClassIndex.Index.ToString())
+                        FName exportClassTypeName = Exports[i].GetExportClassType();
+                        string exportClassType = exportClassTypeName.Value.Value;
+                        switch (exportClassType)
                         {
-                            case "BlueprintGeneratedClass":
-                            case "WidgetBlueprintGeneratedClass":
-                            case "AnimBlueprintGeneratedClass":
-                                ClassExport bgc = Exports[i].ConvertToChildExport<ClassExport>();
-                                Exports[i] = bgc;
-                                Exports[i].Read(reader, (int)nextStarting);
-
-                                // Check to see if we can add some new map type overrides
-                                if (bgc.LoadedProperties != null)
-                                {
-                                    foreach (FProperty entry in bgc.LoadedProperties)
-                                    {
-                                        if (entry is FMapProperty fMapEntry)
-                                        {
-                                            FName keyOverride = null;
-                                            FName valueOverride = null;
-                                            if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName;
-                                            if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName;
-
-                                            MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FName, FName>(keyOverride, valueOverride));
-                                        }
-                                    }
-                                }
-                                break;
                             case "Level":
                                 Exports[i] = Exports[i].ConvertToChildExport<LevelExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
@@ -1096,8 +1074,46 @@ namespace UAssetAPI
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             default:
-                                Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
-                                Exports[i].Read(reader, (int)nextStarting);
+                                if (exportClassType.EndsWith("DataTable"))
+                                {
+                                    Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
+                                    Exports[i].Read(reader, (int)nextStarting);
+                                }
+                                else if (exportClassType.EndsWith("BlueprintGeneratedClass"))
+                                {
+                                    ClassExport bgc = Exports[i].ConvertToChildExport<ClassExport>();
+                                    Exports[i] = bgc;
+                                    Exports[i].Read(reader, (int)nextStarting);
+
+                                    // Check to see if we can add some new map type overrides
+                                    if (bgc.LoadedProperties != null)
+                                    {
+                                        foreach (FProperty entry in bgc.LoadedProperties)
+                                        {
+                                            if (entry is FMapProperty fMapEntry)
+                                            {
+                                                FName keyOverride = null;
+                                                FName valueOverride = null;
+                                                if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) 
+                                                    keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName;
+                                                if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) 
+                                                    valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName;
+
+                                                MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FName, FName>(keyOverride, valueOverride));
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType))
+                                {
+                                    Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();
+                                    Exports[i].Read(reader, (int)nextStarting);
+                                }
+                                else
+                                {
+                                    Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
+                                    Exports[i].Read(reader, (int)nextStarting);
+                                }
                                 break;
                         }
 
@@ -1591,7 +1607,7 @@ namespace UAssetAPI
             }
         }
 
-        private static JsonSerializerSettings jsonSettings = new()
+        internal static JsonSerializerSettings jsonSettings = new()
         {
             TypeNameHandling = TypeNameHandling.Objects,
             NullValueHandling = NullValueHandling.Include,

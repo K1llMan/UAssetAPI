@@ -28,6 +28,10 @@
     <CopyItems Include="TestAssets\**\*.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestAssets\TestCustomProperty\" />
+  </ItemGroup>
+
   <Target Name="CopyTestData" AfterTargets="AfterBuild">
     <Copy SourceFiles="@(CopyItems)" DestinationFolder="$(OutputPath)\TestAssets\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
   </Target>

@@ -207,7 +207,7 @@ namespace UAssetAPI.Tests.Tests
             (tester.Exports.Count == 1).Should().BeTrue();
 
             DataTableExport ourDataTableExport = tester.Exports[0] as DataTableExport;
-            DataTable ourTable = ourDataTableExport?.Table;
+            UDataTable ourTable = ourDataTableExport?.Table;
             ourTable.Should().NotBeNull();
 
             // Check out the first entry to make sure it's parsing alright, and flip all the flags for later testing
@@ -245,6 +245,37 @@ namespace UAssetAPI.Tests.Tests
             tester2.Write(tester2.FilePath);
             File.ReadAllBytes(path)
                 .SequenceEqual(File.ReadAllBytes(modifiedTableFilename)).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// In this test, we examine a variety of assets from different games and ensure that they parse correctly and maintain binary equality.
+        /// </summary>
+        [Theory]
+        [InlineData(@"TestAssets/TestCustomProperty/AlternateStartActor.uasset")]
+        public void TestCustomProperty(string path)
+        {
+            UAsset tester = new UAsset(path, UE4Version.VER_UE4_23);
+            tester.VerifyBinaryEquality().Should().BeTrue();
+            CheckAllExportsParsedCorrectly(tester).Should().BeTrue();
+
+            // Make sure that there are no unknown properties, and that there is at least one CoolProperty with a value of 72
+            bool hasCoolProperty = false;
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport is NormalExport normalTestExport)
+                {
+                    foreach (PropertyData prop in normalTestExport.Data)
+                    {
+                        (prop is UnknownPropertyData).Should().BeFalse();
+                        if (prop is CoolPropertyData coolProp)
+                        {
+                            hasCoolProperty = true;
+                            (coolProp.Value == 72).Should().BeTrue();
+                        }
+                    }
+                }
+            }
+            hasCoolProperty.Should().BeTrue();
         }
 
         public BasicTest(AssetUnitTestHarness fixture, ITestOutputHelper output) : base(fixture, output)

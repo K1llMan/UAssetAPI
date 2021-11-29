@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+
+using Newtonsoft.Json;
+
+using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.UnrealTypes;
 
@@ -10,6 +15,11 @@ namespace UAssetAPI
     public static class UAPUtils
     {
         public static string CurrentCommit = string.Empty;
+
+        public static string SerializeJson(object obj, Formatting jsonFormatting = Formatting.None)
+        {
+            return JsonConvert.SerializeObject(obj, jsonFormatting, UAsset.jsonSettings);
+        }
 
         public static List<T> FindAllInstances<T>(object parent) where T : class
         {
@@ -60,6 +70,22 @@ namespace UAssetAPI
             if (val.CompareTo(min) < 0) return min;
             if (val.CompareTo(max) > 0) return max;
             return val;
+        }
+
+        public static FieldInfo[] GetOrderedFields<T>()
+        {
+            return typeof(T).GetFields()
+                .Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true))
+                .OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex)
+                .ToArray();
+        }
+
+        public static FieldInfo[] GetOrderedFields(Type t)
+        {
+            return t.GetFields()
+                .Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true))
+                .OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex)
+                .ToArray();
         }
 
         public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)

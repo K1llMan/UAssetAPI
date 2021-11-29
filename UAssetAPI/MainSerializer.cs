@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using UAssetAPI.DataAccess;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes;
+using UAssetAPI.PropertyTypes.Simple;
 using UAssetAPI.PropertyTypes.Struct;
 using UAssetAPI.UnrealTypes;
 
@@ -52,6 +53,16 @@ namespace UAssetAPI
             set => _propertyTypeRegistry = value; // I hope you know what you're doing!
         }
 
+        private static IEnumerable<Assembly> GetDependentAssemblies(Assembly analyzedAssembly)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().Where(a => GetNamesOfAssembliesReferencedBy(a).Contains(analyzedAssembly.FullName));
+        }
+
+        public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly assembly)
+        {
+            return assembly.GetReferencedAssemblies().Select(assemblyName => assemblyName.FullName);
+        }
+
         private static Type registryParentDataType = typeof(PropertyData);
 
         /// <summary>
@@ -62,8 +73,10 @@ namespace UAssetAPI
             if (_propertyTypeRegistry != null) return;
             _propertyTypeRegistry = new Dictionary<string, RegistryEntry>();
 
-            Assembly[] allAssemblies = new Assembly[1];
+            Assembly[] allDependentAssemblies = GetDependentAssemblies(registryParentDataType.Assembly).ToArray();
+            Assembly[] allAssemblies = new Assembly[allDependentAssemblies.Length + 1];
             allAssemblies[0] = registryParentDataType.Assembly;
+            Array.Copy(allDependentAssemblies, 0, allAssemblies, 1, allDependentAssemblies.Length);
 
             foreach (Assembly assembly in allAssemblies)
             {
@@ -82,12 +95,17 @@ namespace UAssetAPI
                     if (returnedHasCustomStructSerialization == null) 
                         continue;
 
-                    RegistryEntry res = new()
+                    bool? returnedShouldBeRegistered = currentPropertyDataType.GetProperty("ShouldBeRegistered")?.GetValue(testInstance, null) as bool?;
+                    if (returnedShouldBeRegistered == null) continue;
+
+                    if ((bool)returnedShouldBeRegistered)
                     {
-                        PropertyType = currentPropertyDataType,
-                        HasCustomStructSerialization = (bool) returnedHasCustomStructSerialization
-                    };
-                    _propertyTypeRegistry[returnedPropType.Value.Value] = res;
+                        RegistryEntry res = new() {
+                            PropertyType = currentPropertyDataType,
+                            HasCustomStructSerialization = (bool) returnedHasCustomStructSerialization
+                        };
+                        _propertyTypeRegistry[returnedPropType.Value.Value] = res;
+                    }
                 }
             }
 
@@ -135,8 +153,24 @@ namespace UAssetAPI
                 if (reader != null) 
                     Debug.WriteLine("Pos: " + reader.BaseStream.Position);
                 Debug.WriteLine("Last type: " + lastType.PropertyType);
-                if (lastType is StructPropertyData) 
-                    Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType);
+                switch (lastType)
+                {
+                    case ArrayPropertyData propertyData:
+                        Debug.WriteLine("Last array's type was " + propertyData.ArrayType);
+                        break;
+                    case StructPropertyData propertyData:
+                        Debug.WriteLine("Last struct's type was " + propertyData.StructType);
+                        break;
+                    case MapPropertyData lastTypeMap when lastTypeMap.Value.Count == 0:
+                        Debug.WriteLine("Last map's key type was " + lastTypeMap.KeyType);
+                        Debug.WriteLine("Last map's value type was " + lastTypeMap.ValueType);
+                        break;
+                    case MapPropertyData lastTypeMap:
+                        Debug.WriteLine("Last map's key type was " + lastTypeMap.Value.Keys.ElementAt(0).PropertyType);
+                        Debug.WriteLine("Last map's value type was " + lastTypeMap.Value[0].PropertyType);
+                        break;
+                }
+
                 Debug.WriteLine("-----------");
 #endif
 
@@ -218,6 +252,53 @@ namespace UAssetAPI
         public static void WriteFProperty(FProperty prop, AssetBinaryWriter writer)
         {
             writer.Write(prop.SerializedType);
+            prop.Write(writer);
+        }
+
+        /// <summary>
+        /// Reads a UProperty into memory. Primarily used as a part of <see cref="PropertyExport"/> serialization.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the UProperty to be read.</param>
+        /// <param name="serializedType">The type of UProperty to be read.</param>
+        /// <returns>The FProperty read from disk.</returns>
+        public static UProperty ReadUProperty(AssetBinaryReader reader, FName serializedType)
+        {
+            return ReadUProperty(reader, Type.GetType("UAssetAPI.FieldTypes.U" + allNonLetters.Replace(serializedType.Value.Value, string.Empty)));
+        }
+
+        /// <summary>
+        /// Reads a UProperty into memory. Primarily used as a part of <see cref="PropertyExport"/> serialization.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the UProperty to be read.</param>
+        /// <param name="requestedType">The type of UProperty to be read.</param>
+        /// <returns>The FProperty read from disk.</returns>
+        public static UProperty ReadUProperty(AssetBinaryReader reader, Type requestedType)
+        {
+            if (requestedType == null) requestedType = typeof(UGenericProperty);
+            var res = (UProperty)Activator.CreateInstance(requestedType);
+            res.Read(reader);
+            return res;
+        }
+
+        /// <summary>
+        /// Reads a UProperty into memory. Primarily used as a part of <see cref="PropertyExport"/> serialization.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the UProperty to be read.</param>
+        /// <returns>The FProperty read from disk.</returns>
+        public static T ReadUProperty<T>(AssetBinaryReader reader) where T : UProperty
+        {
+            var res = (UProperty)Activator.CreateInstance(typeof(T));
+            res.Read(reader);
+            return (T)res;
+        }
+
+        /// <summary>
+        /// Serializes a UProperty from memory.
+        /// </summary>
+        /// <param name="prop">The UProperty to serialize.</param>
+        /// <param name="writer">The BinaryWriter to serialize the UProperty to.</param>
+        public static void WriteUProperty(UProperty prop, AssetBinaryWriter writer)
+        {
             prop.Write(writer);
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -12,10 +11,10 @@ using UAssetAPI.UnrealTypes.Enums;
 namespace UAssetAPI.ExportTypes
 {
     [AttributeUsage(AttributeTargets.Field)]
-    internal class FObjectExportFieldAttribute : Attribute
+    internal class DisplayIndexOrderAttribute : Attribute
     {
         internal int DisplayingIndex;
-        internal FObjectExportFieldAttribute(int displayingIndex)
+        internal DisplayIndexOrderAttribute(int displayingIndex)
         {
             DisplayingIndex = displayingIndex;
         }
@@ -28,69 +27,69 @@ namespace UAssetAPI.ExportTypes
     public class Export : FObjectResource, ICloneable
     {
         ///<summary>Location of this export's class (import/other export). 0 = this export is a UClass</summary>
-        [FObjectExportField(2)]
+        [DisplayIndexOrder(2)]
         public FPackageIndex ClassIndex;
         ///<summary>Location of this export's parent class (import/other export). 0 = this export is not derived from UStruct</summary>
-        [FObjectExportField(3)]
+        [DisplayIndexOrder(3)]
         public FPackageIndex SuperIndex;
         ///<summary>Location of this export's template (import/other export). 0 = there is some problem</summary>
-        [FObjectExportField(4)]
+        [DisplayIndexOrder(4)]
         public FPackageIndex TemplateIndex;
         ///<summary>The object flags for the UObject represented by this resource. Only flags that match the RF_Load combination mask will be loaded from disk and applied to the UObject.</summary>
-        [FObjectExportField(5)]
+        [DisplayIndexOrder(5)]
         public EObjectFlags ObjectFlags;
         ///<summary>The number of bytes to serialize when saving/loading this export's UObject.</summary>
-        [FObjectExportField(6)]
+        [DisplayIndexOrder(6)]
         public long SerialSize;
         ///<summary>The location (into the FLinker's underlying file reader archive) of the beginning of the data for this export's UObject. Used for verification only.</summary>
-        [FObjectExportField(7)]
+        [DisplayIndexOrder(7)]
         public long SerialOffset;
         ///<summary>Was this export forced into the export table via OBJECTMARK_ForceTagExp?</summary>
-        [FObjectExportField(8)]
+        [DisplayIndexOrder(8)]
         public bool bForcedExport;
         ///<summary>Should this export not be loaded on clients?</summary>
-        [FObjectExportField(9)]
+        [DisplayIndexOrder(9)]
         public bool bNotForClient;
         ///<summary>Should this export not be loaded on servers?</summary>
-        [FObjectExportField(10)]
+        [DisplayIndexOrder(10)]
         public bool bNotForServer;
         ///<summary>If this object is a top level package (which must have been forced into the export table via OBJECTMARK_ForceTagExp), this is the GUID for the original package file. Deprecated</summary>
-        [FObjectExportField(11)]
+        [DisplayIndexOrder(11)]
         public Guid PackageGuid;
         ///<summary>If this export is a top-level package, this is the flags for the original package</summary>
-        [FObjectExportField(12)]
+        [DisplayIndexOrder(12)]
         public EPackageFlags PackageFlags;
         ///<summary>Should this export be always loaded in editor game?</summary>
-        [FObjectExportField(13)]
+        [DisplayIndexOrder(13)]
         public bool bNotAlwaysLoadedForEditorGame;
         ///<summary>Is this export an asset?</summary>
-        [FObjectExportField(14)]
+        [DisplayIndexOrder(14)]
         public bool bIsAsset;
 
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
         /// </summary>
-        [FObjectExportField(15)]
+        [DisplayIndexOrder(15)]
         public int FirstExportDependency;
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
         /// </summary>
-        [FObjectExportField(16)]
+        [DisplayIndexOrder(16)]
         public int SerializationBeforeSerializationDependencies;
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
         /// </summary>
-        [FObjectExportField(17)]
+        [DisplayIndexOrder(17)]
         public int CreateBeforeSerializationDependencies;
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
         /// </summary>
-        [FObjectExportField(18)]
+        [DisplayIndexOrder(18)]
         public int SerializationBeforeCreateDependencies;
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
         /// </summary>
-        [FObjectExportField(19)]
+        [DisplayIndexOrder(19)]
         public int CreateBeforeCreateDependencies;
         
         /// <summary>
@@ -130,11 +129,7 @@ namespace UAssetAPI.ExportTypes
         {
             if (_allFields != null) 
                 return;
-            _allFields = typeof(Export)
-                .GetFields()
-                .Where(fld => fld.IsDefined(typeof(FObjectExportFieldAttribute), true))
-                .OrderBy(fld => ((FObjectExportFieldAttribute[])fld.GetCustomAttributes(typeof(FObjectExportFieldAttribute), true))[0].DisplayingIndex)
-                .ToArray();
+            _allFields = UAPUtils.GetOrderedFields<Export>();
         }
 
         public static FieldInfo[] GetAllObjectExportFields()
@@ -142,6 +137,13 @@ namespace UAssetAPI.ExportTypes
             InitAllFields();
 
             return _allFields;
+        }
+
+        public FName GetExportClassType()
+        {
+            return ClassIndex.IsImport() 
+                ? ClassIndex.ToImport(Asset).ObjectName 
+                : new FName(ClassIndex.Index.ToString());
         }
 
         public static string[] GetAllFieldNames()

@@ -16,7 +16,7 @@ namespace UAssetAPI.ExportTypes
     }
 
     /// <summary>
-    /// Reflection data for an enumeration.
+    /// Reflection data for an enumeration. See <see cref="UEnum"/>.
     /// </summary>
     public class UEnum
     {
