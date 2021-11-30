@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -55,7 +56,14 @@ namespace UAssetAPI
 
         private static IEnumerable<Assembly> GetDependentAssemblies(Assembly analyzedAssembly)
         {
-            return AppDomain.CurrentDomain.GetAssemblies().Where(a => GetNamesOfAssembliesReferencedBy(a).Contains(analyzedAssembly.FullName));
+            IEnumerable<Assembly> friendlyAssemblies = Directory
+                .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
+                .Select(Assembly.LoadFrom)
+                .Where(a => GetNamesOfAssembliesReferencedBy(a).Contains(analyzedAssembly.FullName));
+
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => GetNamesOfAssembliesReferencedBy(a).Contains(analyzedAssembly.FullName))
+                .Union(friendlyAssemblies);
         }
 
         public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly assembly)
@@ -70,7 +78,8 @@ namespace UAssetAPI
         /// </summary>
         private static void InitializePropertyTypeRegistry()
         {
-            if (_propertyTypeRegistry != null) return;
+            if (_propertyTypeRegistry != null) 
+                return;
             _propertyTypeRegistry = new Dictionary<string, RegistryEntry>();
 
             Assembly[] allDependentAssemblies = GetDependentAssemblies(registryParentDataType.Assembly).ToArray();
