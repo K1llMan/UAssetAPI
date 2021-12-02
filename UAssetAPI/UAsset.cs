@@ -212,7 +212,8 @@ namespace UAssetAPI
         public FString GetNameReferenceWithoutZero(int index)
         {
             FixNameMapLookupIfNeeded();
-            if (index <= 0) return new FString(Convert.ToString(-index));
+            if (index <= 0) 
+                return new FString(Convert.ToString(-index));
             if (index > nameMapIndexList.Count) 
                 return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
@@ -341,9 +342,8 @@ namespace UAssetAPI
         /// <returns>The version of the retrieved custom version.</returns>
         public int GetCustomVersion(string friendlyName)
         {
-            for (int i = 0; i < CustomVersionContainer.Count; i++)
+            foreach (CustomVersion custVer in CustomVersionContainer)
             {
-                CustomVersion custVer = CustomVersionContainer[i];
                 if (custVer.FriendlyName == friendlyName)
                 {
                     return custVer.Version;
@@ -419,16 +419,15 @@ namespace UAssetAPI
         public int SearchForImport(FName classPackage, FName className, FName objectName)
         {
             int currentPos = 0;
-            for (int i = 0; i < Imports.Count; i++)
+            foreach (Import import in Imports)
             {
                 currentPos--;
-                if (classPackage == Imports[i].ClassPackage
-                    && className == Imports[i].ClassName
-                    && objectName == Imports[i].ObjectName)
+                if (classPackage == import.ClassPackage
+                    && className == import.ClassName
+                    && objectName == import.ObjectName)
                 {
                     return currentPos;
                 }
-
             }
 
             return 0;

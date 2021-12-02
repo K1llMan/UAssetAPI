@@ -105,7 +105,8 @@ namespace UAssetAPI
                         continue;
 
                     bool? returnedShouldBeRegistered = currentPropertyDataType.GetProperty("ShouldBeRegistered")?.GetValue(testInstance, null) as bool?;
-                    if (returnedShouldBeRegistered == null) continue;
+                    if (returnedShouldBeRegistered == null)
+                        continue;
 
                     if ((bool)returnedShouldBeRegistered)
                     {
