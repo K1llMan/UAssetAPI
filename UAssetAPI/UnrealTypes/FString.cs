@@ -58,28 +58,26 @@ namespace UAssetAPI.UnrealTypes
 
         public object Clone()
         {
-            return new FString(Value, Encoding);
+            return new FString(Value, null, Encoding);
         }
 
-        public static FString FromString(string value, Encoding encoding = null)
+        public static FString FromString(string value, UAsset asset = null, Encoding encoding = null)
         {
-            if (value == NullCase)
-                return null;
-            return new FString(value, encoding);
+            return value == NullCase
+                ? null
+                : new FString(value, asset, encoding);
         }
 
-        public FString(string value, Encoding encoding = null)
+        public FString(string value, UAsset asset = null, Encoding encoding = null)
         {
-            if (encoding == null)
-                encoding = Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode;
+            encoding ??= Encoding.UTF8.GetByteCount(value) == value.Length
+                ? Encoding.ASCII
+                : Encoding.Unicode;
 
             Value = value;
             Encoding = encoding;
-        }
 
-        public FString()
-        {
-
+            asset?.AddNameReference(this);
         }
     }
 }

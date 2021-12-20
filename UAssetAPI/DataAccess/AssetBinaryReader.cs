@@ -79,12 +79,12 @@ namespace UAssetAPI.DataAccess
                     if (length < 0)
                     {
                         byte[] data = ReadBytes(-length * 2);
-                        return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
+                        return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), null, Encoding.Unicode);
                     }
                     else
                     {
                         byte[] data = ReadBytes(length);
-                        return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
+                        return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), null, Encoding.ASCII);
                     }
             }
         }

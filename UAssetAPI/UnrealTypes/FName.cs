@@ -34,27 +34,29 @@ namespace UAssetAPI.UnrealTypes
         /// Converts a human-readable string into an FName instance. This is the inverse of <see cref="ToString"/>.
         /// </summary>
         /// <param name="val">The human-readable string to convert into an FName instance.</param>
+        /// <param name="asset">Asset to store string</param>
         /// <returns>An FName instance that this string represents.</returns>
         /// <remarks>
         /// If the string ends in a decimal number surrounded by parentheses, such as in alphabet(2), the number inside parentheses (2) will be used as the instance number and the rest of the string will be used as the value (alphabet).
         /// Otherwise, the string itself will become the value of the new instance, and the instance number will default to zero.
         /// </remarks>
-        public static FName FromString(string val)
+        public static FName FromString(string val, UAsset asset = null)
         {
             if (val == null || val == "null") 
                 return null;
             if (val.Length == 0 || val[val.Length - 1] != ')') 
-                return new FName(val);
+                return new FName(val, 0, asset);
 
             int locLastLeftBracket = val.LastIndexOf('(');
-            if (locLastLeftBracket < 0) return new FName(val);
+            if (locLastLeftBracket < 0) 
+                return new FName(val, 0, asset);
 
             string discriminatorRaw = val.Substring(locLastLeftBracket + 1, val.Length - locLastLeftBracket - 2);
             if (!int.TryParse(discriminatorRaw, out int discriminator)) 
-                return new FName(val);
+                return new FName(val, 0, asset);
 
             string realStr = val.Substring(0, locLastLeftBracket);
-            return new FName(realStr, discriminator);
+            return new FName(realStr, discriminator, asset);
         }
 
         public override bool Equals(object obj)
@@ -93,16 +95,12 @@ namespace UAssetAPI.UnrealTypes
         /// </summary>
         /// <param name="value">The string literal that the new FName's value will be, verbatim.</param>
         /// <param name="number">The instance number of the new FName.</param>
-        public FName(string value, int number = 0)
+        /// <param name="asset">Asset to store string</param>
+        public FName(string value, int number = 0, UAsset asset = null)
         {
-            if (value == null)
-            {
-                Value = new FString(null);
-            }
-            else
-            {
-                Value = new FString(value);
-            }
+            Value = value == null 
+                ? new FString(null) 
+                : new FString(value, asset);
             Number = number;
         }
 
